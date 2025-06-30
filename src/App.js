@@ -60,7 +60,7 @@ export default function Dashboard() {
         )}
 
         {(isManager || isEmployee) && (
-          <Link to="/customers" className="dashboard-card">👤 Quản lý Khách hàng</Link>
+          <Link to="/customer" className="dashboard-card">👤 Quản lý Khách hàng</Link>
         )}
 
         {isManager && (
@@ -71,7 +71,7 @@ export default function Dashboard() {
 
 
 
-        <Link to="/customers" className="dashboard-card">👤 Quản lý Khách hàng</Link>
+        <Link to="/customer" className="dashboard-card">👤 Quản lý Khách hàng</Link>
         <Link to="/employees" className="dashboard-card">🧑‍💼 Quản lý Nhân viên</Link>
         <Link to="/discount" className="dashboard-card">🏷️ Tạo Mã Giảm Giá</Link>
         <Link to="/bill" className="dashboard-card">💵 Quản lý Hóa đơn</Link>

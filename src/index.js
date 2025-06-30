@@ -9,6 +9,7 @@ import Ingredient from './Ingredient';
 import Discount from './Discount'
 import Bill from './Bill'
 import Profile from './Profile';
+import Customer from './customer';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Register from './register';
@@ -27,6 +28,7 @@ root.render(
                 <Route path="/Discount" element={<Discount/>}/>
                 <Route path="/Bill" element={<Bill/>}/>
                 <Route path="/Profile" element={<Profile/>}/>
+                <Route path="/customer" element={<Customer/>}/>
             </Routes>
         </BrowserRouter>
     </React.StrictMode>
