@@ -1,0 +1,97 @@
+.ingredient-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.ingredient-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1e40af;
+}
+
+.msg {
+  text-align: center;
+  color: green;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.search-bar button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.ingredient-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.ingredient-form input {
+  flex: 1 1 30%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.ingredient-form button {
+  flex: 1 1 100%;
+  padding: 12px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.ingredient-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ingredient-table th, .ingredient-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.ingredient-table th {
+  background: #f1f5f9;
+}
+
+.ingredient-table button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 4px;
+}
+
+.ingredient-table .delete-btn {
+  background: #ef4444;
+  color: white;
+}

@@ -1,0 +1,93 @@
+.order-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+}
+
+.order-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1e40af;
+}
+
+.order-message {
+  text-align: center;
+  color: green;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.food-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 24px;
+  border: 1px solid #eee;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.food-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.food-item button {
+  background: #1d4ed8;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.order-form {
+  margin-top: 20px;
+}
+
+.selected-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.selected-item input {
+  width: 60px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.total-price {
+  text-align: right;
+  margin-top: 12px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.order-form button {
+  margin-top: 16px;
+  width: 100%;
+  background: #16a34a;
+  color: white;
+  padding: 12px;
+  font-weight: bold;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
