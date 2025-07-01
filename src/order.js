@@ -28,11 +28,22 @@ export default function OrderFoodForm() {
 }, [searchTerm]);
 
   const handleAddFood = (food) => {
-    const exists = selectedItems.find(item => item.id === food.id);
-    if (!exists) {
-      setSelectedItems(prev => [...prev, { ...food, quantity: 1 }]);
-    }
-  };
+  const id = food.id ?? food.id_food; // hỗ trợ cả 2
+  const exists = selectedItems.find(item => item.id === id);
+  if (!exists) {
+    setSelectedItems(prev => [
+      ...prev,
+      {
+        id,
+        id_food: food.id_food ?? food.id,
+        name: food.name,
+        price: food.price,
+        quantity: 1
+      }
+    ]);
+  }
+};
+
 
   const handleQuantityChange = (id, value) => {
     setSelectedItems(prev =>
@@ -45,23 +56,37 @@ export default function OrderFoodForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const orderRequest = {
-      customerId: 1, // hoặc lấy từ localStorage hoặc context
-      items: selectedItems.map(item => ({
-        foodId: item.id,
-        quantity: item.quantity
-      }))
-    };
-
     try {
-      await axios.post('http://localhost:8099/api/orders', orderRequest);
-      setMessage('Đơn hàng đã được tạo!');
+      const resUser = await axios.get("http://localhost:8099/api/users/me", {
+        withCredentials: true,
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"), 
+          },
+      });
+
+      const userId = resUser.data.id_user;
+
+      const orderRequest = {
+        id_user: userId,
+        items: selectedItems.map(item => ({
+          id_food: item.id_food, // dùng id_food rõ ràng
+          quantity: item.quantity
+        }))
+      };
+
+
+      await axios.post("http://localhost:8099/api/orders", orderRequest, {
+        withCredentials: true,
+      });
+
+      setMessage('✅ Đơn hàng đã được tạo!');
       setSelectedItems([]);
     } catch (error) {
-      setMessage('Lỗi khi tạo đơn hàng.');
+      setMessage('❌ Lỗi khi tạo đơn hàng.');
       console.error(error);
     }
   };
+
 
   return (
     <div className="order-container">
@@ -88,7 +113,6 @@ export default function OrderFoodForm() {
           </div>
         ))}
       </div>
-
 
       {selectedItems.length > 0 && (
         <form onSubmit={handleSubmit} className="order-form">

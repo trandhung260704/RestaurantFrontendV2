@@ -9,7 +9,7 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const res = await axios.get("http://localhost:8099/api/users/me", {
-          withCredentials: true, // nếu dùng cookie lưu JWT
+          withCredentials: true,
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"), 
           },

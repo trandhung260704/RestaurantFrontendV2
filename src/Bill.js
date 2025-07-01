@@ -3,7 +3,7 @@ import axios from 'axios';
 import './css/bill.css';
 
 export default function BillManager() {
-  const API = 'http://localhost:8080/api/bills';
+  const API = 'http://localhost:8099/api/bills';
 
   const [bills, setBills] = useState([]);
   const [form, setForm] = useState({
@@ -69,7 +69,7 @@ export default function BillManager() {
       id_bill: bill.id_bill,
       total_price: bill.total_price,
       payment_method: bill.payment_method,
-      bill_time: bill.bill_time?.slice(0, 16), // For datetime-local input
+      bill_time: bill.bill_time?.slice(0, 16),
       id_order: bill.order?.id_order || '',
       id_discount: bill.discount?.id_discount || ''
     });
