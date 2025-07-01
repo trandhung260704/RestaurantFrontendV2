@@ -21,7 +21,12 @@ export default function OrderFoodForm() {
   if (searchTerm.trim()) {
     fetchFoods();
   } else {
-    axios.get('http://localhost:8099/api/foods')
+    axios.get('http://localhost:8099/api/foods', {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      withCredentials: true,
+    })
       .then(res => setFoods(res.data))
       .catch(err => console.error(err));
   }
@@ -43,7 +48,6 @@ export default function OrderFoodForm() {
     ]);
   }
 };
-
 
   const handleQuantityChange = (id, value) => {
     setSelectedItems(prev =>
@@ -77,7 +81,11 @@ export default function OrderFoodForm() {
 
       await axios.post("http://localhost:8099/api/orders", orderRequest, {
         withCredentials: true,
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
       });
+
 
       setMessage('✅ Đơn hàng đã được tạo!');
       setSelectedItems([]);
