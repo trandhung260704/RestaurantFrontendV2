@@ -33,7 +33,7 @@ export default function OrderFoodForm() {
 }, [searchTerm]);
 
   const handleAddFood = (food) => {
-  const id = food.id ?? food.id_food; // hỗ trợ cả 2
+  const id = food.id ?? food.id_food;
   const exists = selectedItems.find(item => item.id === id);
   if (!exists) {
     setSelectedItems(prev => [
@@ -73,7 +73,7 @@ export default function OrderFoodForm() {
       const orderRequest = {
         id_user: userId,
         items: selectedItems.map(item => ({
-          id_food: item.id_food, // dùng id_food rõ ràng
+          id_food: item.id_food, 
           quantity: item.quantity
         }))
       };
