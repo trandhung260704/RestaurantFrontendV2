@@ -12,7 +12,12 @@ export default function CustomerPage() {
 
   const fetchCustomers = async () => {
     try {
-      const res = await axios.get('http://localhost:8099/api/users');
+      const res = await axios.get('http://localhost:8099/api/users',{
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true,
+      });
       setCustomers(res.data.filter(user => user.role === 'CUSTOMER'));
     } catch (error) {
       console.error('Lỗi khi tải khách hàng:', error);
