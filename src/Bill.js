@@ -3,8 +3,6 @@ import axios from 'axios';
 import './css/bill.css';
 
 export default function BillManager() {
-  const API = 'http://localhost:8099/api/bills';
-
   const [bills, setBills] = useState([]);
   const [form, setForm] = useState({
     id_bill: null,
@@ -19,18 +17,23 @@ export default function BillManager() {
   const [search, setSearch] = useState('');
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    loadBills();
-  }, []);
-
   const loadBills = async () => {
     try {
-      const res = await axios.get(API);
+      const res = await axios.get("http://localhost:8099/api/bills", {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true,
+      });
       setBills(res.data);
     } catch (err) {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    loadBills();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -49,10 +52,21 @@ export default function BillManager() {
 
     try {
       if (editing) {
-        await axios.put(`${API}/${form.id_bill}`, payload);
+        await axios.put(`http://localhost:8099/api/bills/${form.id_bill}`, payload, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true,
+        });
+
         setMessage('Cập nhật hóa đơn thành công!');
       } else {
-        await axios.post(API, payload);
+        await axios.post("http://localhost:8099/api/bills", payload, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true,
+        });
         setMessage('Thêm hóa đơn thành công!');
       }
 
@@ -79,7 +93,12 @@ export default function BillManager() {
   const handleDelete = async (id) => {
     if (window.confirm('Bạn có chắc muốn xoá hóa đơn này?')) {
       try {
-        await axios.delete(`${API}/${id}`);
+        await axios.delete(`http://localhost:8099/api/bills/${id}`, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true,
+        });
         setMessage('Xoá thành công.');
         loadBills();
       } catch (err) {
@@ -91,7 +110,12 @@ export default function BillManager() {
 
   const handleSearch = async () => {
     try {
-      const res = await axios.get(`${API}/search?search=${search}`);
+      const res = await axios.get(`http://localhost:8099/api/bills/search?search=${search}`, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true,
+      });
       setBills(res.data ? [res.data] : []);
     } catch (err) {
       setMessage('Không tìm thấy hóa đơn.');
@@ -99,7 +123,14 @@ export default function BillManager() {
   };
 
   const resetForm = () => {
-    setForm({ id_bill: null, total_price: '', payment_method: '', bill_time: '', id_order: '', id_discount: '' });
+    setForm({
+      id_bill: null,
+      total_price: '',
+      payment_method: '',
+      bill_time: '',
+      id_order: '',
+      id_discount: ''
+    });
     setEditing(false);
   };
 

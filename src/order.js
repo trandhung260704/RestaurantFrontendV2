@@ -87,10 +87,10 @@ export default function OrderFoodForm() {
       });
 
 
-      setMessage('✅ Đơn hàng đã được tạo!');
+      setMessage('Đơn hàng đã được tạo!');
       setSelectedItems([]);
     } catch (error) {
-      setMessage('❌ Lỗi khi tạo đơn hàng.');
+      setMessage('Lỗi khi tạo đơn hàng.');
       console.error(error);
     }
   };

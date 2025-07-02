@@ -18,17 +18,20 @@ export default function DiscountManager() {
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
-    loadDiscounts();
+    axios.get(API, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+      withCredentials: true,
+    })
+      .then(res => setDiscounts(res.data))
+      .catch(err => {
+        console.error('Lỗi khi tải mã giảm giá:', err);
+        if (err.response?.status === 403) {
+          setMessage('Không có quyền truy cập mã giảm giá. Vui lòng đăng nhập lại hoặc dùng tài khoản phù hợp.');
+        }
+      });
   }, []);
-
-  const loadDiscounts = async () => {
-    try {
-      const res = await axios.get(API);
-      setDiscounts(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -47,10 +50,20 @@ export default function DiscountManager() {
 
     try {
       if (editing) {
-        await axios.put(`${API}/${form.id}`, dto);
+        await axios.put(`${API}/${form.id}`, dto, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true,
+        });
         setMessage('Cập nhật mã giảm giá thành công!');
       } else {
-        await axios.post(API, dto);
+        await axios.post(API, dto, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true,
+        });
         setMessage('Thêm mã giảm giá thành công!');
       }
 
@@ -59,6 +72,20 @@ export default function DiscountManager() {
       loadDiscounts();
     } catch (err) {
       setMessage('Lỗi khi lưu mã giảm giá.');
+      console.error(err);
+    }
+  };
+
+  const loadDiscounts = async () => {
+    try {
+      const res = await axios.get(API, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true,
+      });
+      setDiscounts(res.data);
+    } catch (err) {
       console.error(err);
     }
   };
@@ -78,7 +105,12 @@ export default function DiscountManager() {
   const handleDelete = async (id) => {
     if (window.confirm('Bạn có chắc muốn xóa mã này?')) {
       try {
-        await axios.delete(`${API}/${id}`);
+        await axios.delete(`${API}/${id}`, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true,
+        });
         setMessage('Đã xoá mã giảm giá.');
         loadDiscounts();
       } catch (err) {
@@ -90,7 +122,12 @@ export default function DiscountManager() {
 
   const handleSearch = async () => {
     try {
-      const res = await axios.get(`${API}/code/${searchCode}`);
+      const res = await axios.get(`${API}/code/${searchCode}`, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true,
+      });
       setDiscounts(res.data ? [res.data] : []);
     } catch (err) {
       setMessage('Không tìm thấy mã này.');

@@ -18,10 +18,21 @@ export default function AddFoodForm() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:8099/api/ingredients')
-      .then(res => setIngredients(res.data))
-      .catch(err => console.error('Lỗi khi tải nguyên liệu:', err));
+  axios.get('http://localhost:8099/api/ingredients', {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token'),
+    },
+    withCredentials: true,
+  })
+    .then(res => setIngredients(res.data))
+    .catch(err => {
+      console.error('Lỗi khi tải nguyên liệu:', err);
+      if (err.response?.status === 403) {
+        setMessage('Không có quyền truy cập nguyên liệu. Vui lòng đăng nhập lại hoặc dùng tài khoản phù hợp.');
+      }
+    });
   }, []);
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +69,7 @@ export default function AddFoodForm() {
 
       await axios.post('http://localhost:8099/api/foods', payload);
 
-      setMessage('✅ Món ăn đã được thêm thành công!');
+      setMessage('Món ăn đã được thêm thành công!');
       setFoodData({
         name: '',
         price: '',
@@ -71,7 +82,7 @@ export default function AddFoodForm() {
       setSearchTerm('');
     } catch (error) {
       console.error('Lỗi khi thêm món ăn:', error);
-      setMessage('❌ Có lỗi xảy ra khi thêm món ăn.');
+      setMessage('Có lỗi xảy ra khi thêm món ăn.');
     }
   };
 

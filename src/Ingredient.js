@@ -18,21 +18,29 @@ export default function IngredientManager() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetchIngredients();
+    axios.get(API, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+      withCredentials: true,
+    })
+      .then(res => setIngredients(res.data))
+      .catch(err => {
+        console.error('Lỗi khi tải nguyên liệu:', err);
+        if (err.response?.status === 403) {
+          setMessage('Không có quyền truy cập nguyên liệu. Vui lòng đăng nhập lại hoặc dùng tài khoản phù hợp.');
+        }
+      });
   }, []);
-
-  const fetchIngredients = async () => {
-    try {
-      const res = await axios.get(API);
-      setIngredients(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const handleSearch = async () => {
     try {
-      const res = await axios.get(`${API}/search?name=${search}`);
+      const res = await axios.get(`${API}/search?name=${search}`, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true,
+      });
       setIngredients(res.data);
     } catch (err) {
       console.error(err);
@@ -56,15 +64,35 @@ export default function IngredientManager() {
 
     try {
       if (editing) {
-        await axios.put(`${API}/${formData.id}`, dto);
+        await axios.put(`${API}/${formData.id}`, dto, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true,
+        });
         setMessage('Cập nhật nguyên liệu thành công!');
       } else {
-        await axios.post(API, dto);
+        await axios.post(API, dto, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true,
+        });
         setMessage('Thêm nguyên liệu thành công!');
       }
+
       setFormData({ id: null, name: '', quantity: '', unit_price: '', unit: '', origin: '' });
       setEditing(false);
-      fetchIngredients();
+
+      // Reload list
+      const res = await axios.get(API, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+        },
+        withCredentials: true,
+      });
+      setIngredients(res.data);
+
     } catch (err) {
       setMessage('Lỗi khi lưu nguyên liệu.');
       console.error(err);
@@ -86,9 +114,21 @@ export default function IngredientManager() {
   const handleDelete = async (id) => {
     if (window.confirm('Bạn có chắc chắn muốn xoá?')) {
       try {
-        await axios.delete(`${API}/${id}`);
+        await axios.delete(`${API}/${id}`, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true,
+        });
         setMessage('Đã xoá nguyên liệu!');
-        fetchIngredients();
+
+        const res = await axios.get(API, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true,
+        });
+        setIngredients(res.data);
       } catch (err) {
         setMessage('Lỗi khi xoá nguyên liệu.');
         console.error(err);
@@ -110,7 +150,7 @@ export default function IngredientManager() {
           onChange={(e) => setSearch(e.target.value)}
         />
         <button onClick={handleSearch}>Tìm</button>
-        <button onClick={fetchIngredients}>Tải lại</button>
+        <button onClick={() => window.location.reload()}>Tải lại</button>
       </div>
 
       <form onSubmit={handleSubmit} className="ingredient-form">
