@@ -10,10 +10,10 @@ import Discount from './Discount'
 import Bill from './Bill'
 import Profile from './Profile';
 import Customer from './customer';
+import Employee from './employee';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Register from './register';
-
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -32,6 +32,7 @@ root.render(
           <Route path="/Bill" element={<Bill />} />
           <Route path="/Profile" element={<Profile />} />
           <Route path="/customer" element={<Customer />} />
+          <Route path="/employee" element={<Employee />} />
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>

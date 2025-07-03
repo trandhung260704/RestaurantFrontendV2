@@ -62,7 +62,7 @@ export default function Dashboard() {
         )}
 
         {isManager && (
-          <Link to="/employees" className="dashboard-card">🧑‍💼 Quản lý Nhân viên</Link>
+          <Link to="/employee" className="dashboard-card">🧑‍💼 Quản lý Nhân viên</Link>
         )}
 
         <Link to="/profile" className="dashboard-card">⚙️ Thông tin Cá nhân</Link>

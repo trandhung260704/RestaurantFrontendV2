@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import './css/ingredient.css';
 
@@ -17,35 +17,36 @@ export default function IngredientManager() {
   const [editing, setEditing] = useState(false);
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    axios.get(API, {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-      },
-      withCredentials: true,
-    })
-      .then(res => setIngredients(res.data))
-      .catch(err => {
-        console.error('Lỗi khi tải nguyên liệu:', err);
-        if (err.response?.status === 403) {
-          setMessage('Không có quyền truy cập nguyên liệu. Vui lòng đăng nhập lại hoặc dùng tài khoản phù hợp.');
-        }
-      });
-  }, []);
+  const [page, setPage] = useState(0);
+  const [size] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
 
-  const handleSearch = async () => {
+  const fetchIngredients = useCallback(async () => {
     try {
-      const res = await axios.get(`${API}/search?name=${search}`, {
+      const res = await axios.get(`${API}${search ? '/search' : ''}`, {
+        params: {
+          name: search,
+          page,
+          size,
+        },
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token'),
         },
         withCredentials: true,
       });
-      setIngredients(res.data);
+      setIngredients(res.data.content);
+      setTotalPages(res.data.totalPages);
     } catch (err) {
-      console.error(err);
+      console.error('Lỗi khi tải nguyên liệu:', err);
+      if (err.response?.status === 403) {
+        setMessage('Không có quyền truy cập nguyên liệu. Vui lòng đăng nhập lại hoặc dùng tài khoản phù hợp.');
+      }
     }
-  };
+  }, [search, page, size]);
+  
+  useEffect(() => {
+    fetchIngredients();
+  }, [fetchIngredients]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -83,15 +84,7 @@ export default function IngredientManager() {
 
       setFormData({ id: null, name: '', quantity: '', unit_price: '', unit: '', origin: '' });
       setEditing(false);
-
-      // Reload list
-      const res = await axios.get(API, {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
-        },
-        withCredentials: true,
-      });
-      setIngredients(res.data);
+      fetchIngredients();
 
     } catch (err) {
       setMessage('Lỗi khi lưu nguyên liệu.');
@@ -121,14 +114,7 @@ export default function IngredientManager() {
           withCredentials: true,
         });
         setMessage('Đã xoá nguyên liệu!');
-
-        const res = await axios.get(API, {
-          headers: {
-            Authorization: 'Bearer ' + localStorage.getItem('token'),
-          },
-          withCredentials: true,
-        });
-        setIngredients(res.data);
+        fetchIngredients();
       } catch (err) {
         setMessage('Lỗi khi xoá nguyên liệu.');
         console.error(err);
@@ -147,10 +133,16 @@ export default function IngredientManager() {
           type="text"
           placeholder="Tìm theo tên..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(0);
+          }}
         />
-        <button onClick={handleSearch}>Tìm</button>
-        <button onClick={() => window.location.reload()}>Tải lại</button>
+        <button onClick={fetchIngredients}>Tìm</button>
+        <button onClick={() => {
+          setSearch('');
+          setPage(0);
+        }}>Tải lại</button>
       </div>
 
       <form onSubmit={handleSubmit} className="ingredient-form">
@@ -175,7 +167,7 @@ export default function IngredientManager() {
           </tr>
         </thead>
         <tbody>
-          {ingredients.map(ing => (
+          {ingredients?.map(ing => (
             <tr key={ing.id_ingredient}>
               <td>{ing.id_ingredient}</td>
               <td>{ing.name}</td>
@@ -191,6 +183,16 @@ export default function IngredientManager() {
           ))}
         </tbody>
       </table>
+
+      <div className="pagination">
+        <button disabled={page === 0} onClick={() => setPage(prev => prev - 1)}>
+          ◀ Trước
+        </button>
+        <span>Trang {page + 1} / {totalPages}</span>
+        <button disabled={page + 1 >= totalPages} onClick={() => setPage(prev => prev + 1)}>
+          Sau ▶
+        </button>
+      </div>
     </div>
   );
 }
