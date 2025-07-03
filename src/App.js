@@ -46,7 +46,7 @@ export default function Dashboard() {
         )}
 
         {(isManager || isEmployee || isCustomer) && (
-          <Link to="/order" className="dashboard-card">🧾 Quản lý Đơn hàng</Link>
+          <Link to="/order" className="dashboard-card">🧾 Đặt đơn món</Link>
         )}
 
         {isManager && (
@@ -59,6 +59,10 @@ export default function Dashboard() {
 
         {(isManager || isEmployee) && (
           <Link to="/customer" className="dashboard-card">👤 Quản lý Khách hàng</Link>
+        )}
+
+        {isManager && (
+          <Link to="/manageOrder" className="dashboard-card">🧑 Quản lý Đơn hàng</Link>
         )}
 
         {isManager && (

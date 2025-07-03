@@ -103,8 +103,8 @@ export default function ManageOrder() {
               <td>
                 <select value={order.status} onChange={(e) => handleStatusChange(order.id_order, e.target.value)}>
                   <option value="PENDING">Đang thực hiện món</option>
-                  <option value="SERVED">Đã phục vụ món</option>
-                  <option value="PAID">Đã thanh toán</option>
+                  <option value="IN_PROGRESS">Đã phục vụ món</option>
+                  <option value="COMPLETED">Đã thanh toán</option>
                 </select>
               </td>
               <td>

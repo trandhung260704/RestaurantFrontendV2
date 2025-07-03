@@ -91,3 +91,15 @@
   border-radius: 10px;
   cursor: pointer;
 }
+.pagination {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  font-weight: bold;
+}
+

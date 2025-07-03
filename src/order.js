@@ -1,53 +1,59 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import './css/order.css';
 
 export default function OrderFoodForm() {
+  const API = 'http://localhost:8099/api/foods';
+
   const [foods, setFoods] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-  const fetchFoods = async () => {
-    try {
-      const res = await axios.get(`http://localhost:8099/api/search/foods?keyword=${searchTerm}`);
-      setFoods(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const [page, setPage] = useState(0);
+  const [size] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
 
-  if (searchTerm.trim()) {
+  const fetchFoods = useCallback(async () => {
+    try {
+      const res = await axios.get(API, {
+        params: {
+          keyword: searchTerm,
+          page,
+          size
+        },
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        withCredentials: true,
+      });
+      setFoods(res.data.content);
+      setTotalPages(res.data.totalPages);
+    } catch (err) {
+      console.error('Lỗi khi tải món ăn:', err);
+    }
+  }, [searchTerm, page, size]);
+
+  useEffect(() => {
     fetchFoods();
-  } else {
-    axios.get('http://localhost:8099/api/foods', {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-      withCredentials: true,
-    })
-      .then(res => setFoods(res.data))
-      .catch(err => console.error(err));
-  }
-}, [searchTerm]);
+  }, [fetchFoods]);
 
   const handleAddFood = (food) => {
-  const id = food.id ?? food.id_food;
-  const exists = selectedItems.find(item => item.id === id);
-  if (!exists) {
-    setSelectedItems(prev => [
-      ...prev,
-      {
-        id,
-        id_food: food.id_food ?? food.id,
-        name: food.name,
-        price: food.price,
-        quantity: 1
-      }
-    ]);
-  }
-};
+    const id = food.id ?? food.id_food;
+    const exists = selectedItems.find(item => item.id === id);
+    if (!exists) {
+      setSelectedItems(prev => [
+        ...prev,
+        {
+          id,
+          id_food: food.id_food ?? food.id,
+          name: food.name,
+          price: food.price,
+          quantity: 1
+        }
+      ]);
+    }
+  };
 
   const handleQuantityChange = (id, value) => {
     setSelectedItems(prev =>
@@ -59,13 +65,12 @@ export default function OrderFoodForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const resUser = await axios.get("http://localhost:8099/api/users/me", {
         withCredentials: true,
         headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"), 
-          },
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
       });
 
       const userId = resUser.data.id_user;
@@ -73,11 +78,10 @@ export default function OrderFoodForm() {
       const orderRequest = {
         id_user: userId,
         items: selectedItems.map(item => ({
-          id_food: item.id_food, 
+          id_food: item.id_food,
           quantity: item.quantity
         }))
       };
-
 
       await axios.post("http://localhost:8099/api/orders", orderRequest, {
         withCredentials: true,
@@ -85,7 +89,6 @@ export default function OrderFoodForm() {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-
 
       setMessage('Đơn hàng đã được tạo!');
       setSelectedItems([]);
@@ -95,11 +98,9 @@ export default function OrderFoodForm() {
     }
   };
 
-
   return (
     <div className="order-container">
       <h2>Đặt món ăn</h2>
-
       {message && <p className="order-message">{message}</p>}
 
       <div className="search-box">
@@ -107,19 +108,28 @@ export default function OrderFoodForm() {
           type="text"
           placeholder="Tìm món ăn..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setPage(0);
+          }}
         />
       </div>
 
       <div className="food-list">
         {foods.map(food => (
-          <div key={food.id} className="food-item">
+          <div key={food.id_food ?? food.id} className="food-item">
             <div>
               <strong>{food.name}</strong> - {food.price.toLocaleString()}đ
             </div>
             <button onClick={() => handleAddFood(food)}>Chọn</button>
           </div>
         ))}
+      </div>
+
+      <div className="pagination">
+        <button disabled={page === 0} onClick={() => setPage(prev => prev - 1)}>◀ Trước</button>
+        <span>Trang {page + 1} / {totalPages}</span>
+        <button disabled={page + 1 >= totalPages} onClick={() => setPage(prev => prev + 1)}>Sau ▶</button>
       </div>
 
       {selectedItems.length > 0 && (
