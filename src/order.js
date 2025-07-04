@@ -1,18 +1,48 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import logo from './image/favicon-48x48.png';
 import './css/order.css';
+import OrderEffects from './components/OrderEffects';
 
 export default function OrderFoodForm() {
   const API = 'http://localhost:8099/api/foods';
+  const navigate = useNavigate();
+  const effectsRef = useRef(null);
 
   const [foods, setFoods] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [userInfo, setUserInfo] = useState({
+    fullName: 'Guest',
+    role: 'CUSTOMER'
+  });
 
   const [page, setPage] = useState(0);
   const [size] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+
+  useEffect(() => {
+    // Khởi tạo effects
+    effectsRef.current = new OrderEffects();
+    effectsRef.current.addCardAnimations();
+    effectsRef.current.addSearchEffects();
+    effectsRef.current.addButtonEffects();
+    effectsRef.current.addMessageEffects();
+    effectsRef.current.addQuantityEffects();
+    effectsRef.current.addPaginationEffects();
+    effectsRef.current.addLogoEffects();
+    effectsRef.current.addUserInfoEffects();
+    effectsRef.current.addTotalPriceEffects();
+    effectsRef.current.addEmptyStateEffects();
+    
+    // Lấy thông tin user
+    const fullName = localStorage.getItem('full_name') || 'Guest';
+    const role = localStorage.getItem('role') || 'CUSTOMER';
+    setUserInfo({ fullName, role });
+  }, []);
 
   const fetchFoods = useCallback(async () => {
     try {
@@ -52,6 +82,8 @@ export default function OrderFoodForm() {
           quantity: 1
         }
       ]);
+      
+      effectsRef.current?.addItemAnimation(food.id_food ?? food.id);
     }
   };
 
@@ -61,10 +93,16 @@ export default function OrderFoodForm() {
     );
   };
 
+  const handleRemoveItem = (id) => {
+    setSelectedItems(prev => prev.filter(item => item.id !== id));
+  };
+
   const totalPrice = selectedItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    
     try {
       const resUser = await axios.get("http://localhost:8099/api/users/me", {
         withCredentials: true,
@@ -90,66 +128,180 @@ export default function OrderFoodForm() {
         },
       });
 
-      setMessage('Đơn hàng đã được tạo!');
+      setMessage('✅ Đơn hàng đã được tạo thành công!');
       setSelectedItems([]);
+      
+      // Auto hide message after 3 seconds
+      setTimeout(() => {
+        setMessage('');
+      }, 3000);
     } catch (error) {
-      setMessage('Lỗi khi tạo đơn hàng.');
+      setMessage('❌ Lỗi khi tạo đơn hàng. Vui lòng thử lại.');
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="order-container">
-      <h2>Đặt món ăn</h2>
-      {message && <p className="order-message">{message}</p>}
-
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Tìm món ăn..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setPage(0);
-          }}
-        />
-      </div>
-
-      <div className="food-list">
-        {foods.map(food => (
-          <div key={food.id_food ?? food.id} className="food-item">
-            <div>
-              <strong>{food.name}</strong> - {food.price.toLocaleString()}đ
+      {/* Header */}
+      <header className="order-header">
+        <div className="header-content">
+          <div className="logo-section">
+            <img src={logo} alt="Restaurant Logo" className="order-logo" />
+            <div className="logo-text">
+              <h1>Đặt món ăn</h1>
+              <p>Chọn món ăn yêu thích của bạn</p>
             </div>
-            <button onClick={() => handleAddFood(food)}>Chọn</button>
           </div>
-        ))}
+          <div className="user-section">
+            <div className="user-info">
+              <div className="user-avatar">
+                <span className="avatar-text">{userInfo.fullName.charAt(0).toUpperCase()}</span>
+              </div>
+              <div className="user-details">
+                <p className="user-name">{userInfo.fullName}</p>
+                <p className="user-role">{userInfo.role}</p>
+              </div>
+            </div>
+            <button onClick={() => navigate('/')} className="back-btn">
+              ← Về Dashboard
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Message */}
+      {message && (
+        <div className={`order-message ${message.includes('✅') ? 'success' : 'error'}`}>
+          <span>{message}</span>
+        </div>
+      )}
+
+      {/* Search Section */}
+      <div className="search-section">
+        <div className="search-box">
+          <span className="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Tìm món ăn..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setPage(0);
+            }}
+            className="search-input"
+          />
+        </div>
       </div>
 
-      <div className="pagination">
-        <button disabled={page === 0} onClick={() => setPage(prev => prev - 1)}>◀ Trước</button>
-        <span>Trang {page + 1} / {totalPages}</span>
-        <button disabled={page + 1 >= totalPages} onClick={() => setPage(prev => prev + 1)}>Sau ▶</button>
-      </div>
-
-      {selectedItems.length > 0 && (
-        <form onSubmit={handleSubmit} className="order-form">
-          <h3>Danh sách món đã chọn:</h3>
-          {selectedItems.map(item => (
-            <div key={item.id} className="selected-item">
-              <span>{item.name}</span>
-              <input
-                type="number"
-                min="1"
-                value={item.quantity}
-                onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-              />
-              <span>{(item.quantity * item.price).toLocaleString()}đ</span>
+      {/* Food List */}
+      <div className="food-section">
+        <h2 className="section-title">🍽️ Danh sách món ăn</h2>
+        <div className="food-grid">
+          {foods.map(food => (
+            <div key={food.id_food ?? food.id} className="food-card" data-food-id={food.id_food ?? food.id}>
+              <div className="food-info">
+                <h3 className="food-name">{food.name}</h3>
+                <p className="food-price">{food.price.toLocaleString()}đ</p>
+              </div>
+              <button 
+                onClick={() => handleAddFood(food)}
+                className="add-food-btn"
+              >
+                ➕ Thêm
+              </button>
             </div>
           ))}
-          <div className="total-price">Tổng tiền: {totalPrice.toLocaleString()}đ</div>
-          <button type="submit">Xác nhận đặt món</button>
-        </form>
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button 
+              disabled={page === 0} 
+              onClick={() => setPage(prev => prev - 1)}
+              className="pagination-btn"
+            >
+              ◀ Trước
+            </button>
+            <span className="page-info">Trang {page + 1} / {totalPages}</span>
+            <button 
+              disabled={page + 1 >= totalPages} 
+              onClick={() => setPage(prev => prev + 1)}
+              className="pagination-btn"
+            >
+              Sau ▶
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Selected Items */}
+      {selectedItems.length > 0 && (
+        <div className="selected-section">
+          <h2 className="section-title">🛒 Giỏ hàng của bạn</h2>
+          <form onSubmit={handleSubmit} className="order-form">
+            <div className="selected-items">
+              {selectedItems.map(item => (
+                <div key={item.id} className="selected-item">
+                  <div className="item-info">
+                    <span className="item-name">{item.name}</span>
+                    <span className="item-price">{item.price.toLocaleString()}đ</span>
+                  </div>
+                  <div className="item-controls">
+                    <input
+                      type="number"
+                      min="1"
+                      value={item.quantity}
+                      onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                      className="quantity-input"
+                    />
+                    <span className="item-total">{(item.quantity * item.price).toLocaleString()}đ</span>
+                    <button 
+                      type="button"
+                      onClick={() => handleRemoveItem(item.id)}
+                      className="remove-btn"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="order-summary">
+              <div className="total-price">
+                <span>Tổng tiền:</span>
+                <span className="total-amount">{totalPrice.toLocaleString()}đ</span>
+              </div>
+              <button 
+                type="submit" 
+                className={`submit-btn ${isLoading ? 'loading' : ''}`}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <span className="loading-spinner"></span>
+                    Đang xử lý...
+                  </>
+                ) : (
+                  '✅ Xác nhận đặt món'
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {selectedItems.length === 0 && foods.length === 0 && (
+        <div className="empty-state">
+          <div className="empty-icon">🍽️</div>
+          <h3>Chưa có món ăn nào</h3>
+          <p>Hãy thử tìm kiếm món ăn khác hoặc liên hệ quản lý để thêm món mới.</p>
+        </div>
       )}
     </div>
   );

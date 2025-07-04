@@ -57,7 +57,7 @@ function () {
     key: "addAvatarAnimation",
     value: function addAvatarAnimation() {
       var avatar = document.querySelector('.profile-avatar');
-      if (!avatar) return; // Hiệu ứng entrance
+      if (!avatar) return;
 
       avatar.style.opacity = '0';
       avatar.style.transform = 'scale(0.5) rotate(-180deg)';
