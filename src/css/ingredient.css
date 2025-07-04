@@ -1,4 +1,3 @@
-/* Ingredient CSS */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
@@ -14,7 +13,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Header */
 .ingredient-header {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
@@ -134,7 +132,6 @@ body {
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
-/* Message */
 .ingredient-message {
   max-width: 1400px;
   margin: 20px auto;
@@ -171,7 +168,6 @@ body {
   }
 }
 
-/* Search Section */
 .search-section {
   max-width: 1400px;
   margin: 20px auto;
@@ -257,7 +253,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* Form Section */
 .form-section {
   max-width: 1400px;
   margin: 30px auto;
