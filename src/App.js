@@ -22,7 +22,6 @@ export default function Dashboard() {
       });
       setIsLoading(false);
       
-      // Khởi tạo effects sau khi loading xong
       setTimeout(() => {
         effectsRef.current = new DashboardEffects();
         effectsRef.current.addLogoHoverEffect();
