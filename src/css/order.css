@@ -9,12 +9,12 @@ body {
 
 .order-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
   position: relative;
   overflow-x: hidden;
+  padding-top: 70px;
 }
 
-/* Header */
 .order-header {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './css/login.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import logo from './image/favicon-48x48.png';
 import LoginEffects from './components/LoginEffects';
+import { FaArrowLeft, FaEye, FaEyeSlash, FaUser, FaLock, FaExclamationTriangle } from 'react-icons/fa';
 
 export default function Login() {
   const [loginData, setLoginData] = useState({ username: '', password: '' });
@@ -72,13 +73,22 @@ export default function Login() {
 
   return (
     <div className="login-container">
+      {/* Background với gradient tím */}
       <div className="login-background">
+        <div className="gradient-overlay"></div>
         <div className="floating-shapes">
           <div className="shape shape-1"></div>
           <div className="shape shape-2"></div>
           <div className="shape shape-3"></div>
+          <div className="shape shape-4"></div>
         </div>
       </div>
+
+      {/* Button quay về trang chủ */}
+      <Link to="/" className="back-home-btn">
+        <FaArrowLeft />
+        <span>Về trang chủ</span>
+      </Link>
       
       <div className="login-card">
         <div className="login-header">
@@ -86,7 +96,7 @@ export default function Login() {
             <img src={logo} alt="Restaurant Logo" className="login-logo" />
             <div className="logo-text">
               <h1>Restaurant</h1>
-              <p>Hệ thống quản lý nhà hàng</p>
+              <span>Eternity</span>
             </div>
           </div>
         </div>
@@ -97,14 +107,14 @@ export default function Login() {
           
           {error && (
             <div className="error-message">
-              <span className="error-icon">⚠️</span>
+              <FaExclamationTriangle className="error-icon" />
               <span>{error}</span>
             </div>
           )}
 
           <div className="input-group">
             <div className="input-wrapper">
-              <span className="input-icon">👤</span>
+              <FaUser className="input-icon" />
               <input
                 type="text"
                 name="username"
@@ -119,7 +129,7 @@ export default function Login() {
 
           <div className="input-group">
             <div className="input-wrapper">
-              <span className="input-icon">🔒</span>
+              <FaLock className="input-icon" />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -134,7 +144,7 @@ export default function Login() {
                 className="password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? "🙈" : "👁️"}
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
           </div>
@@ -170,9 +180,9 @@ export default function Login() {
           </div>
 
           <div className="auth-links">
-            <a href="/register" className="register-link">
+            <Link to="/register" className="register-link">
               Bạn chưa có tài khoản? <strong>Đăng ký ngay</strong>
-            </a>
+            </Link>
           </div>
         </form>
       </div>

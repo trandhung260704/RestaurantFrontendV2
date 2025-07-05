@@ -12,6 +12,7 @@ import Profile from './Profile';
 import Customer from './customer';
 import Employee from './employee';
 import ManageOrder from './manageOrder';
+import Statistics from './Statistics';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Register from './register';
@@ -35,6 +36,7 @@ root.render(
           <Route path="/customer" element={<Customer />} />
           <Route path="/employee" element={<Employee />} />
           <Route path="/manageOrder" element={<ManageOrder />} />
+          <Route path="/Statistics" element={<Statistics />} />
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>

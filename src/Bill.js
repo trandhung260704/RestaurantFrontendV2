@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import logo from './image/favicon-48x48.png';
 import './css/bill.css';
 import BillEffects from './components/BillEffects';
+import Header from './Header';
 
 export default function BillPage() {
-  const navigate = useNavigate();
   const effectsRef = useRef(null);
 
   const [bills, setBills] = useState([]);
@@ -155,42 +154,47 @@ export default function BillPage() {
   };
 
   return (
-    <div className="bill-container">
-      {/* Header */}
-      <header className="bill-header">
-        <div className="header-content">
-          <div className="logo-section">
-            <img src={logo} alt="Restaurant Logo" className="bill-logo" />
-            <div className="logo-text">
-              <h1>Quản lý hóa đơn</h1>
-              <p>Danh sách và thông tin hóa đơn</p>
-            </div>
-          </div>
-          <div className="user-section">
-            <div className="user-info">
-              <div className="user-avatar">
-                <span className="avatar-text">{userInfo.fullName.charAt(0).toUpperCase()}</span>
-              </div>
-              <div className="user-details">
-                <p className="user-name">{userInfo.fullName}</p>
-                <p className="user-role">{userInfo.role}</p>
+    <>
+      <Header />
+      <div className="bill-container">
+        {/* Header */}
+        <div className="bill-header">
+          <div className="header-content">
+            <div className="logo-section">
+              <img src={logo} alt="Restaurant Logo" className="bill-logo" />
+              <div className="logo-text">
+                <h1>Quản lý hóa đơn</h1>
+                <p>Hệ thống quản lý nhà hàng</p>
               </div>
             </div>
-            <button onClick={() => navigate('/')} className="back-btn">
-              ← Về Dashboard
-            </button>
+            <div className="user-section">
+              <div className="user-info">
+                <div className="user-avatar">
+                  <span className="avatar-text">{userInfo.fullName.charAt(0)}</span>
+                </div>
+                <div className="user-details">
+                  <p className="user-name">{userInfo.fullName}</p>
+                  <p className="user-role">{userInfo.role}</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => window.history.back()} 
+                className="back-btn"
+              >
+                ← Quay lại
+              </button>
+            </div>
           </div>
         </div>
-      </header>
 
-      {/* Message */}
-      {message && (
-        <div className={`bill-message ${message.includes('❌') ? 'error' : 'success'}`}>
-          <span>{message}</span>
-        </div>
-      )}
+        {/* Message */}
+        {message && (
+          <div className={`bill-message ${message.includes('❌') ? 'error' : 'success'}`}>
+            <span>{message}</span>
+          </div>
+        )}
 
-      <div className="bill-content">
+        <div className="bill-content">
         <div className="content-header">
           <h2 className="section-title">🧾 Danh sách hóa đơn</h2>
           <div className="stats-cards">
@@ -343,5 +347,6 @@ export default function BillPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

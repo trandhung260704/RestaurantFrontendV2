@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import logo from './image/favicon-48x48.png';
 import './css/ingredient.css';
 import IngredientEffects from './components/IngredientEffects';
+import Header from './Header';
 
 export default function IngredientManager() {
   const API = 'http://localhost:8099/api/ingredients';
-  const navigate = useNavigate();
   const effectsRef = useRef(null);
 
   const [ingredients, setIngredients] = useState([]);
@@ -176,42 +175,47 @@ export default function IngredientManager() {
   };
 
   return (
-    <div className="ingredient-container">
-      {/* Header */}
-      <header className="ingredient-header">
-        <div className="header-content">
-          <div className="logo-section">
-            <img src={logo} alt="Restaurant Logo" className="ingredient-logo" />
-            <div className="logo-text">
-              <h1>Quản lý nguyên liệu</h1>
-              <p>Quản lý kho nguyên liệu nhà hàng</p>
-            </div>
-          </div>
-          <div className="user-section">
-            <div className="user-info">
-              <div className="user-avatar">
-                <span className="avatar-text">{userInfo.fullName.charAt(0).toUpperCase()}</span>
-              </div>
-              <div className="user-details">
-                <p className="user-name">{userInfo.fullName}</p>
-                <p className="user-role">{userInfo.role}</p>
+    <>
+      <Header />
+      <div className="ingredient-container">
+        {/* Header */}
+        <div className="ingredient-header">
+          <div className="header-content">
+            <div className="logo-section">
+              <img src={logo} alt="Restaurant Logo" className="ingredient-logo" />
+              <div className="logo-text">
+                <h1>Quản lý nguyên liệu</h1>
+                <p>Hệ thống quản lý nhà hàng</p>
               </div>
             </div>
-            <button onClick={() => navigate('/')} className="back-btn">
-              ← Về Dashboard
-            </button>
+            <div className="user-section">
+              <div className="user-info">
+                <div className="user-avatar">
+                  <span className="avatar-text">{userInfo.fullName.charAt(0)}</span>
+                </div>
+                <div className="user-details">
+                  <p className="user-name">{userInfo.fullName}</p>
+                  <p className="user-role">{userInfo.role}</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => window.history.back()} 
+                className="back-btn"
+              >
+                ← Quay lại
+              </button>
+            </div>
           </div>
         </div>
-      </header>
 
-      {/* Message */}
-      {message && (
-        <div className={`ingredient-message ${message.includes('✅') ? 'success' : 'error'}`}>
-          <span>{message}</span>
-        </div>
-      )}
+        {/* Message */}
+        {message && (
+          <div className={`ingredient-message ${message.includes('✅') ? 'success' : 'error'}`}>
+            <span>{message}</span>
+          </div>
+        )}
 
-      {/* Search Section */}
+        {/* Search Section */}
       <div className="search-section">
         <div className="search-box">
           <span className="search-icon">🔍</span>
@@ -423,5 +427,6 @@ export default function IngredientManager() {
         </div>
       )}
     </div>
+    </>
   );
 }

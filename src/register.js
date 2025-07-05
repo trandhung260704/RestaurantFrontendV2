@@ -1,9 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import logo from './image/favicon-48x48.png';
 import './css/register.css';
 import RegisterEffects from './components/RegisterEffects';
+import { 
+  FaArrowLeft, 
+  FaEye, 
+  FaEyeSlash, 
+  FaUser, 
+  FaLock, 
+  FaEnvelope, 
+  FaPhone, 
+  FaCalendarAlt, 
+  FaVenusMars,
+  FaExclamationTriangle,
+  FaCheckCircle
+} from 'react-icons/fa';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -109,51 +122,60 @@ export default function Register() {
 
   return (
     <div className="register-container">
+      {/* Background với gradient tím */}
       <div className="register-background">
+        <div className="gradient-overlay"></div>
         <div className="floating-shapes">
           <div className="shape shape-1"></div>
           <div className="shape shape-2"></div>
           <div className="shape shape-3"></div>
+          <div className="shape shape-4"></div>
         </div>
       </div>
 
+      {/* Button quay về trang chủ */}
+      <Link to="/" className="back-home-btn">
+        <FaArrowLeft />
+        <span>Về trang chủ</span>
+      </Link>
+
       <div className="register-card">
         <div className="register-header">
-          <div className="header-content">
-            <div className="logo-section">
-              <img src={logo} alt="Restaurant Logo" className="register-logo" />
-              <div className="logo-text">
-                <h1>Đăng ký tài khoản</h1>
-                <p>Tham gia hệ thống quản lý nhà hàng</p>
-              </div>
+          <div className="logo-section">
+            <img src={logo} alt="Restaurant Logo" className="register-logo" />
+            <div className="logo-text">
+              <h1>Restaurant</h1>
+              <span>Eternity</span>
             </div>
-            <button onClick={() => navigate('/login')} className="back-btn">
-              ← Quay lại đăng nhập
-            </button>
           </div>
         </div>
 
-        {message && (
-          <div className={`message ${message.includes('thành công') ? 'success' : 'error'}`}>
-            <span className="message-icon">
-              {message.includes('thành công') ? '✅' : '⚠️'}
-            </span>
-            <span>{message}</span>
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="register-form">
+          <h2>Đăng ký tài khoản</h2>
+          <p className="register-subtitle">Tham gia hệ thống quản lý nhà hàng</p>
+          
+          {message && (
+            <div className={`message ${message.includes('thành công') ? 'success' : 'error'}`}>
+              {message.includes('thành công') ? (
+                <FaCheckCircle className="message-icon" />
+              ) : (
+                <FaExclamationTriangle className="message-icon" />
+              )}
+              <span>{message}</span>
+            </div>
+          )}
+
           <div className="form-section">
             <h3>Thông tin cá nhân</h3>
             
             <div className="form-group">
               <label>Họ và tên</label>
               <div className="input-wrapper">
-                <span className="input-icon">👤</span>
+                <FaUser className="input-icon" />
                 <input
                   type="text"
                   name="full_name"
-                  placeholder="Nhập họ và tên"
+                  placeholder="Nhập họ và tên đầy đủ"
                   value={formData.full_name}
                   onChange={handleChange}
                   className={`form-input ${errors.full_name ? 'error' : ''}`}
@@ -166,11 +188,11 @@ export default function Register() {
             <div className="form-group">
               <label>Email</label>
               <div className="input-wrapper">
-                <span className="input-icon">📧</span>
+                <FaEnvelope className="input-icon" />
                 <input
                   type="email"
                   name="email"
-                  placeholder="Nhập email"
+                  placeholder="example@email.com"
                   value={formData.email}
                   onChange={handleChange}
                   className={`form-input ${errors.email ? 'error' : ''}`}
@@ -183,11 +205,11 @@ export default function Register() {
             <div className="form-group">
               <label>Mật khẩu</label>
               <div className="input-wrapper">
-                <span className="input-icon">🔒</span>
+                <FaLock className="input-icon" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="Nhập mật khẩu"
+                  placeholder="Tối thiểu 6 ký tự"
                   value={formData.password}
                   onChange={handleChange}
                   className={`form-input ${errors.password ? 'error' : ''}`}
@@ -198,7 +220,7 @@ export default function Register() {
                   className="password-toggle"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? "🙈" : "👁️"}
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
               {errors.password && <div className="field-error">{errors.password}</div>}
@@ -207,11 +229,11 @@ export default function Register() {
             <div className="form-group">
               <label>Số điện thoại</label>
               <div className="input-wrapper">
-                <span className="input-icon">📱</span>
+                <FaPhone className="input-icon" />
                 <input
                   type="tel"
                   name="phone"
-                  placeholder="Nhập số điện thoại"
+                  placeholder="0123456789"
                   value={formData.phone}
                   onChange={handleChange}
                   className={`form-input ${errors.phone ? 'error' : ''}`}
@@ -225,7 +247,7 @@ export default function Register() {
               <div className="form-group">
                 <label>Ngày sinh</label>
                 <div className="input-wrapper">
-                  <span className="input-icon">🎂</span>
+                  <FaCalendarAlt className="input-icon" />
                   <input
                     type="date"
                     name="birthday"
@@ -241,7 +263,7 @@ export default function Register() {
               <div className="form-group">
                 <label>Giới tính</label>
                 <div className="input-wrapper">
-                  <span className="input-icon">👥</span>
+                  <FaVenusMars className="input-icon" />
                   <select
                     name="gender"
                     value={formData.gender}
@@ -276,9 +298,9 @@ export default function Register() {
 
           <div className="auth-links">
             <p>Bạn đã có tài khoản? 
-              <a href="/login" className="login-link">
+              <Link to="/login" className="login-link">
                 <strong>Đăng nhập ngay</strong>
-              </a>
+              </Link>
             </p>
           </div>
         </form>

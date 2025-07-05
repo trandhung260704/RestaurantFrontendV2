@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import logo from './image/favicon-48x48.png';
 import './css/order.css';
 import OrderEffects from './components/OrderEffects';
+import Header from './Header';
 
 export default function OrderFoodForm() {
   const API = 'http://localhost:8099/api/foods';
-  const navigate = useNavigate();
   const effectsRef = useRef(null);
 
   const [foods, setFoods] = useState([]);
@@ -144,165 +143,171 @@ export default function OrderFoodForm() {
   };
 
   return (
-    <div className="order-container">
-      {/* Header */}
-      <header className="order-header">
-        <div className="header-content">
-          <div className="logo-section">
-            <img src={logo} alt="Restaurant Logo" className="order-logo" />
-            <div className="logo-text">
-              <h1>Đặt món ăn</h1>
-              <p>Chọn món ăn yêu thích của bạn</p>
-            </div>
-          </div>
-          <div className="user-section">
-            <div className="user-info">
-              <div className="user-avatar">
-                <span className="avatar-text">{userInfo.fullName.charAt(0).toUpperCase()}</span>
-              </div>
-              <div className="user-details">
-                <p className="user-name">{userInfo.fullName}</p>
-                <p className="user-role">{userInfo.role}</p>
+    <>
+      <Header />
+      <div className="order-container">
+        {/* Header */}
+        <div className="order-header">
+          <div className="header-content">
+            <div className="logo-section">
+              <img src={logo} alt="Restaurant Logo" className="order-logo" />
+              <div className="logo-text">
+                <h1>Đặt món ăn</h1>
+                <p>Hệ thống quản lý nhà hàng</p>
               </div>
             </div>
-            <button onClick={() => navigate('/')} className="back-btn">
-              ← Về Dashboard
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Message */}
-      {message && (
-        <div className={`order-message ${message.includes('✅') ? 'success' : 'error'}`}>
-          <span>{message}</span>
-        </div>
-      )}
-
-      {/* Search Section */}
-      <div className="search-section">
-        <div className="search-box">
-          <span className="search-icon">🔍</span>
-          <input
-            type="text"
-            placeholder="Tìm món ăn..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setPage(0);
-            }}
-            className="search-input"
-          />
-        </div>
-      </div>
-
-      {/* Food List */}
-      <div className="food-section">
-        <h2 className="section-title">🍽️ Danh sách món ăn</h2>
-        <div className="food-grid">
-          {foods.map(food => (
-            <div key={food.id_food ?? food.id} className="food-card" data-food-id={food.id_food ?? food.id}>
-              <div className="food-info">
-                <h3 className="food-name">{food.name}</h3>
-                <p className="food-price">{food.price.toLocaleString()}đ</p>
+            <div className="user-section">
+              <div className="user-info">
+                <div className="user-avatar">
+                  <span className="avatar-text">{userInfo.fullName.charAt(0)}</span>
+                </div>
+                <div className="user-details">
+                  <p className="user-name">{userInfo.fullName}</p>
+                  <p className="user-role">{userInfo.role}</p>
+                </div>
               </div>
               <button 
-                onClick={() => handleAddFood(food)}
-                className="add-food-btn"
+                onClick={() => window.history.back()} 
+                className="back-btn"
               >
-                ➕ Thêm
+                ← Quay lại
               </button>
             </div>
-          ))}
+          </div>
         </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="pagination">
-            <button 
-              disabled={page === 0} 
-              onClick={() => setPage(prev => prev - 1)}
-              className="pagination-btn"
-            >
-              ◀ Trước
-            </button>
-            <span className="page-info">Trang {page + 1} / {totalPages}</span>
-            <button 
-              disabled={page + 1 >= totalPages} 
-              onClick={() => setPage(prev => prev + 1)}
-              className="pagination-btn"
-            >
-              Sau ▶
-            </button>
+        {/* Message */}
+        {message && (
+          <div className={`order-message ${message.includes('✅') ? 'success' : 'error'}`}>
+            <span>{message}</span>
+          </div>
+        )}
+
+        {/* Search Section */}
+        <div className="search-section">
+          <div className="search-box">
+            <span className="search-icon">��</span>
+            <input
+              type="text"
+              placeholder="Tìm món ăn..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setPage(0);
+              }}
+              className="search-input"
+            />
+          </div>
+        </div>
+
+        {/* Food List */}
+        <div className="food-section">
+          <h2 className="section-title">🍽️ Danh sách món ăn</h2>
+          <div className="food-grid">
+            {foods.map(food => (
+              <div key={food.id_food ?? food.id} className="food-card" data-food-id={food.id_food ?? food.id}>
+                <div className="food-info">
+                  <h3 className="food-name">{food.name}</h3>
+                  <p className="food-price">{food.price.toLocaleString()}đ</p>
+                </div>
+                <button 
+                  onClick={() => handleAddFood(food)}
+                  className="add-food-btn"
+                >
+                  ➕ Thêm
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button 
+                disabled={page === 0} 
+                onClick={() => setPage(prev => prev - 1)}
+                className="pagination-btn"
+              >
+                ◀ Trước
+              </button>
+              <span className="page-info">Trang {page + 1} / {totalPages}</span>
+              <button 
+                disabled={page + 1 >= totalPages} 
+                onClick={() => setPage(prev => prev + 1)}
+                className="pagination-btn"
+              >
+                Sau ▶
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Selected Items */}
+        {selectedItems.length > 0 && (
+          <div className="selected-section">
+            <h2 className="section-title">🛒 Giỏ hàng của bạn</h2>
+            <form onSubmit={handleSubmit} className="order-form">
+              <div className="selected-items">
+                {selectedItems.map(item => (
+                  <div key={item.id} className="selected-item">
+                    <div className="item-info">
+                      <span className="item-name">{item.name}</span>
+                      <span className="item-price">{item.price.toLocaleString()}đ</span>
+                    </div>
+                    <div className="item-controls">
+                      <input
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                        className="quantity-input"
+                      />
+                      <span className="item-total">{(item.quantity * item.price).toLocaleString()}đ</span>
+                      <button 
+                        type="button"
+                        onClick={() => handleRemoveItem(item.id)}
+                        className="remove-btn"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="order-summary">
+                <div className="total-price">
+                  <span>Tổng tiền:</span>
+                  <span className="total-amount">{totalPrice.toLocaleString()}đ</span>
+                </div>
+                <button 
+                  type="submit" 
+                  className={`submit-btn ${isLoading ? 'loading' : ''}`}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <span className="loading-spinner"></span>
+                      Đang xử lý...
+                    </>
+                  ) : (
+                    '✅ Xác nhận đặt món'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {selectedItems.length === 0 && foods.length === 0 && (
+          <div className="empty-state">
+            <div className="empty-icon">🍽️</div>
+            <h3>Chưa có món ăn nào</h3>
+            <p>Hãy thử tìm kiếm món ăn khác hoặc liên hệ quản lý để thêm món mới.</p>
           </div>
         )}
       </div>
-
-      {/* Selected Items */}
-      {selectedItems.length > 0 && (
-        <div className="selected-section">
-          <h2 className="section-title">🛒 Giỏ hàng của bạn</h2>
-          <form onSubmit={handleSubmit} className="order-form">
-            <div className="selected-items">
-              {selectedItems.map(item => (
-                <div key={item.id} className="selected-item">
-                  <div className="item-info">
-                    <span className="item-name">{item.name}</span>
-                    <span className="item-price">{item.price.toLocaleString()}đ</span>
-                  </div>
-                  <div className="item-controls">
-                    <input
-                      type="number"
-                      min="1"
-                      value={item.quantity}
-                      onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                      className="quantity-input"
-                    />
-                    <span className="item-total">{(item.quantity * item.price).toLocaleString()}đ</span>
-                    <button 
-                      type="button"
-                      onClick={() => handleRemoveItem(item.id)}
-                      className="remove-btn"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="order-summary">
-              <div className="total-price">
-                <span>Tổng tiền:</span>
-                <span className="total-amount">{totalPrice.toLocaleString()}đ</span>
-              </div>
-              <button 
-                type="submit" 
-                className={`submit-btn ${isLoading ? 'loading' : ''}`}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <span className="loading-spinner"></span>
-                    Đang xử lý...
-                  </>
-                ) : (
-                  '✅ Xác nhận đặt món'
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Empty State */}
-      {selectedItems.length === 0 && foods.length === 0 && (
-        <div className="empty-state">
-          <div className="empty-icon">🍽️</div>
-          <h3>Chưa có món ăn nào</h3>
-          <p>Hãy thử tìm kiếm món ăn khác hoặc liên hệ quản lý để thêm món mới.</p>
-        </div>
-      )}
-    </div>
+    </>
   );
 }
