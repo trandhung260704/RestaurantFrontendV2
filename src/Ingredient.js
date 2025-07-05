@@ -28,11 +28,10 @@ export default function IngredientManager() {
   });
 
   const [page, setPage] = useState(0);
-  const [size] = useState(5);
+  const [size] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    // Khởi tạo effects
     effectsRef.current = new IngredientEffects();
     effectsRef.current.addTableAnimations();
     effectsRef.current.addFormEffects();
@@ -42,7 +41,6 @@ export default function IngredientManager() {
     effectsRef.current.addLogoEffects();
     effectsRef.current.addUserInfoEffects();
     
-    // Lấy thông tin user
     const fullName = localStorage.getItem('full_name') || 'Guest';
     const role = localStorage.getItem('role') || 'MANAGER';
     setUserInfo({ fullName, role });
@@ -215,218 +213,266 @@ export default function IngredientManager() {
           </div>
         )}
 
-        {/* Search Section */}
-      <div className="search-section">
-        <div className="search-box">
-          <span className="search-icon">🔍</span>
-          <input
-            type="text"
-            placeholder="Tìm theo tên nguyên liệu..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(0);
-            }}
-            className="search-input"
-          />
-        </div>
-        <div className="search-buttons">
-          <button onClick={fetchIngredients} className="search-btn">
-            🔍 Tìm kiếm
-          </button>
-          <button 
-            onClick={() => {
-              setSearch('');
-              setPage(0);
-            }} 
-            className="reset-btn"
-          >
-            🔄 Tải lại
-          </button>
-        </div>
-      </div>
+        <div className="ingredient-content">
+          <div className="content-header">
+            <h2 className="section-title">📦 Quản lý nguyên liệu</h2>
+            <div className="stats-cards">
+              <div className="stat-card">
+                <div className="stat-icon">📦</div>
+                <div className="stat-info">
+                  <span className="stat-number">{ingredients.length}</span>
+                  <span className="stat-label">Tổng nguyên liệu</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon">🔍</div>
+                <div className="stat-info">
+                  <span className="stat-number">{ingredients.filter(ing => ing.quantity > 0).length}</span>
+                  <span className="stat-label">Còn hàng</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon">💰</div>
+                <div className="stat-info">
+                  <span className="stat-number">
+                    {ingredients.reduce((sum, ing) => sum + (ing.quantity * ing.unit_price), 0).toLocaleString()}
+                  </span>
+                  <span className="stat-label">Tổng giá trị</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      {/* Form Section */}
-      <div className="form-section">
-        <h2 className="section-title">📝 {editing ? 'Cập nhật nguyên liệu' : 'Thêm nguyên liệu mới'}</h2>
-        <form onSubmit={handleSubmit} className="ingredient-form">
-          <div className="form-row">
-            <div className="form-group">
-              <label>Tên nguyên liệu</label>
-              <input 
-                name="name" 
-                placeholder="Nhập tên nguyên liệu" 
-                value={formData.name} 
-                onChange={handleChange} 
-                required 
-                className="form-input"
+          {/* Search Section */}
+          <div className="search-section">
+            <div className="search-box">
+              <span className="search-icon">🔍</span>
+              <input
+                type="text"
+                placeholder="Tìm kiếm theo tên nguyên liệu..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(0);
+                }}
+                className="search-input"
               />
             </div>
-            <div className="form-group">
-              <label>Số lượng</label>
-              <input 
-                name="quantity" 
-                type="number" 
-                placeholder="Nhập số lượng" 
-                value={formData.quantity} 
-                onChange={handleChange} 
-                required 
-                className="form-input"
-              />
-            </div>
-          </div>
-          
-          <div className="form-row">
-            <div className="form-group">
-              <label>Đơn giá</label>
-              <input 
-                name="unit_price" 
-                type="number" 
-                placeholder="Nhập đơn giá" 
-                value={formData.unit_price} 
-                onChange={handleChange} 
-                required 
-                className="form-input"
-              />
-            </div>
-            <div className="form-group">
-              <label>Đơn vị</label>
-              <input 
-                name="unit" 
-                placeholder="kg, gam, lít..." 
-                value={formData.unit} 
-                onChange={handleChange} 
-                required 
-                className="form-input"
-              />
-            </div>
-          </div>
-          
-          <div className="form-group">
-            <label>Xuất xứ</label>
-            <input 
-              name="origin" 
-              placeholder="Nhập xuất xứ nguyên liệu" 
-              value={formData.origin} 
-              onChange={handleChange} 
-              required 
-              className="form-input"
-            />
-          </div>
-          
-          <div className="form-actions">
-            <button 
-              type="submit" 
-              className={`submit-btn ${isLoading ? 'loading' : ''}`}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <span className="loading-spinner"></span>
-                  Đang xử lý...
-                </>
-              ) : (
-                editing ? '✅ Cập nhật' : '➕ Thêm mới'
-              )}
-            </button>
-            {editing && (
+            {search && (
               <button 
-                type="button" 
-                onClick={handleCancel}
-                className="cancel-btn"
+                onClick={() => {
+                  setSearch('');
+                  setPage(0);
+                }}
+                className="clear-search-btn"
               >
-                ❌ Hủy
+                ✕ Xóa tìm kiếm
               </button>
             )}
           </div>
-        </form>
-      </div>
 
-      {/* Ingredients Table */}
-      <div className="ingredients-section">
-        <h2 className="section-title">📦 Danh sách nguyên liệu</h2>
-        
-        {ingredients.length > 0 ? (
-          <div className="ingredients-table-container">
-            <table className="ingredients-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Tên nguyên liệu</th>
-                  <th>Số lượng</th>
-                  <th>Đơn giá</th>
-                  <th>Đơn vị</th>
-                  <th>Xuất xứ</th>
-                  <th>Hành động</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ingredients.map((ing, index) => (
-                  <tr key={ing.id_ingredient} className="ingredient-row" style={{ animationDelay: `${index * 0.1}s` }}>
-                    <td className="ingredient-id">#{ing.id_ingredient}</td>
-                    <td className="ingredient-name">{ing.name}</td>
-                    <td className="ingredient-quantity">{ing.quantity}</td>
-                    <td className="ingredient-price">{ing.unit_price.toLocaleString()}đ</td>
-                    <td className="ingredient-unit">{ing.unit}</td>
-                    <td className="ingredient-origin">{ing.origin}</td>
-                    <td className="ingredient-actions">
-                      <button 
-                        onClick={() => handleEdit(ing)}
-                        className="edit-btn"
-                      >
-                        ✏️ Sửa
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(ing.id_ingredient)}
-                        className="delete-btn"
-                        disabled={isLoading}
-                      >
-                        🗑️ Xoá
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* Form Section */}
+          <div className="form-section">
+            <h3 className="form-title">📝 {editing ? 'Cập nhật nguyên liệu' : 'Thêm nguyên liệu mới'}</h3>
+            <form onSubmit={handleSubmit} className="ingredient-form">
+              <div className="form-grid">
+                <div className="form-group">
+                  <label className="form-label">Tên nguyên liệu</label>
+                  <input 
+                    name="name" 
+                    placeholder="Nhập tên nguyên liệu" 
+                    value={formData.name} 
+                    onChange={handleChange} 
+                    required 
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Số lượng</label>
+                  <input 
+                    name="quantity" 
+                    type="number" 
+                    placeholder="Nhập số lượng" 
+                    value={formData.quantity} 
+                    onChange={handleChange} 
+                    required 
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Đơn giá (VNĐ)</label>
+                  <input 
+                    name="unit_price" 
+                    type="number" 
+                    placeholder="Nhập đơn giá" 
+                    value={formData.unit_price} 
+                    onChange={handleChange} 
+                    required 
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Đơn vị</label>
+                  <input 
+                    name="unit" 
+                    placeholder="kg, gam, lít..." 
+                    value={formData.unit} 
+                    onChange={handleChange} 
+                    required 
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group full-width">
+                  <label className="form-label">Xuất xứ</label>
+                  <input 
+                    name="origin" 
+                    placeholder="Nhập xuất xứ nguyên liệu" 
+                    value={formData.origin} 
+                    onChange={handleChange} 
+                    required 
+                    className="form-input"
+                  />
+                </div>
+              </div>
+              
+              <div className="form-actions">
+                <button 
+                  type="submit" 
+                  className={`submit-btn ${isLoading ? 'loading' : ''}`}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <span className="loading-spinner"></span>
+                      Đang xử lý...
+                    </>
+                  ) : (
+                    editing ? '✅ Cập nhật' : '➕ Thêm mới'
+                  )}
+                </button>
+                {editing && (
+                  <button 
+                    type="button" 
+                    onClick={handleCancel}
+                    className="cancel-btn"
+                  >
+                    ❌ Hủy
+                  </button>
+                )}
+              </div>
+            </form>
           </div>
-        ) : (
-          <div className="empty-state">
-            <div className="empty-icon">📦</div>
-            <h3>Chưa có nguyên liệu nào</h3>
-            <p>Hãy thêm nguyên liệu mới hoặc kiểm tra lại bộ lọc tìm kiếm.</p>
-          </div>
-        )}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="pagination">
-            <button 
-              disabled={page === 0} 
-              onClick={() => setPage(prev => prev - 1)}
-              className="pagination-btn"
-            >
-              ◀ Trước
-            </button>
-            <span className="page-info">Trang {page + 1} / {totalPages}</span>
-            <button 
-              disabled={page + 1 >= totalPages} 
-              onClick={() => setPage(prev => prev + 1)}
-              className="pagination-btn"
-            >
-              Sau ▶
-            </button>
-          </div>
-        )}
-      </div>
+          {/* Ingredients Table */}
+          <div className="table-section">
+            <h3 className="table-title">📋 Danh sách nguyên liệu</h3>
+            
+            {ingredients.length > 0 ? (
+              <div className="table-container">
+                <table className="ingredient-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Tên nguyên liệu</th>
+                      <th>Số lượng</th>
+                      <th>Đơn giá</th>
+                      <th>Đơn vị</th>
+                      <th>Xuất xứ</th>
+                      <th>Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ingredients.map((ing, index) => (
+                      <tr key={ing.id_ingredient} className="ingredient-row" style={{ animationDelay: `${index * 0.1}s` }}>
+                        <td className="ingredient-id">
+                          <span className="id-badge">#{ing.id_ingredient}</span>
+                        </td>
+                        <td className="ingredient-name">{ing.name}</td>
+                        <td className="ingredient-quantity">
+                          <span className={`quantity-badge ${ing.quantity > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                            {ing.quantity}
+                          </span>
+                        </td>
+                        <td className="ingredient-price">
+                          <span className="price">{ing.unit_price.toLocaleString()}đ</span>
+                        </td>
+                        <td className="ingredient-unit">{ing.unit}</td>
+                        <td className="ingredient-origin">{ing.origin}</td>
+                        <td className="ingredient-actions">
+                          <button 
+                            onClick={() => handleEdit(ing)}
+                            className="edit-btn"
+                          >
+                            ✏️ Sửa
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(ing.id_ingredient)}
+                            className="delete-btn"
+                            disabled={isLoading}
+                          >
+                            🗑️ Xoá
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="empty-state">
+                <div className="empty-icon">📦</div>
+                <h3>Chưa có nguyên liệu nào</h3>
+                <p>
+                  {search 
+                    ? `Không có kết quả nào cho "${search}"`
+                    : 'Hãy thêm nguyên liệu mới để bắt đầu quản lý kho hàng.'
+                  }
+                </p>
+                {search && (
+                  <button 
+                    onClick={() => {
+                      setSearch('');
+                      setPage(0);
+                    }}
+                    className="clear-search-btn"
+                  >
+                    ✕ Xóa tìm kiếm
+                  </button>
+                )}
+              </div>
+            )}
 
-      {/* Loading Overlay */}
-      {isLoading && (
-        <div className="loading-overlay">
-          <div className="loading-spinner"></div>
-          <p>Đang xử lý...</p>
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="pagination">
+                <button 
+                  disabled={page === 0} 
+                  onClick={() => setPage(prev => prev - 1)}
+                  className="pagination-btn"
+                >
+                  ◀ Trước
+                </button>
+                <span className="page-info">Trang {page + 1} / {totalPages}</span>
+                <button 
+                  disabled={page + 1 >= totalPages} 
+                  onClick={() => setPage(prev => prev + 1)}
+                  className="pagination-btn"
+                >
+                  Sau ▶
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      )}
-    </div>
+
+        {/* Loading Overlay */}
+        {isLoading && (
+          <div className="loading-overlay">
+            <div className="loading-spinner"></div>
+            <p>Đang xử lý...</p>
+          </div>
+        )}
+      </div>
     </>
   );
 }
