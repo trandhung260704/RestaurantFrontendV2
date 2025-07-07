@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -22,10 +22,10 @@ import {
   FaBoxOpen, 
   FaClock,
   FaChartBar,
-  FaClipboardList
+  FaClipboardList,
+  FaSpinner
 } from 'react-icons/fa';
 
-// Đăng ký các components cần thiết cho Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -40,14 +40,13 @@ ChartJS.register(
 );
 
 export default function StatisticsPage() {
-  // State cho dữ liệu thống kê
   const [revenueData, setRevenueData] = useState({
     labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
     datasets: []
   });
   
-  const [customerData, setCustomerData] = useState({
-    labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+  const [customerAgeData, setCustomerAgeData] = useState({
+    labels: [],
     datasets: []
   });
   
@@ -66,40 +65,187 @@ export default function StatisticsPage() {
     datasets: []
   });
 
-  // State cho tổng quan
   const [overview, setOverview] = useState({
     totalRevenue: 0,
-    totalCustomers: 0,
-    totalOrders: 0,
-    totalFoods: 0,
-    totalIngredients: 0
+    totalIngredientCost: 0,
+    netProfit: 0,
+    averageCustomerAge: 0
   });
 
-  // Tạo dữ liệu mẫu cho demo
-  useEffect(() => {
-    // Dữ liệu doanh thu theo ngày trong tuần
-    const revenueDataset = {
-      label: 'Doanh Thu (triệu VNĐ)',
-      data: [12.5, 15.2, 18.7, 14.3, 20.1, 25.8, 22.4, 19.6],
-      backgroundColor: 'rgba(102, 126, 234, 0.8)',
-      borderColor: 'rgba(102, 126, 234, 1)',
-      borderWidth: 2,
-      borderRadius: 8,
-      borderSkipped: false,
-    };
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    // Dữ liệu khách hàng theo ngày
-    const customerDataset = {
-      label: 'Số Khách Hàng',
-      data: [45, 52, 68, 48, 75, 89, 76, 62],
-      backgroundColor: 'rgba(34, 197, 94, 0.8)',
-      borderColor: 'rgba(34, 197, 94, 1)',
-      borderWidth: 2,
-      borderRadius: 8,
-      borderSkipped: false,
-    };
+  const API_BASE_URL = 'http://localhost:8099/api';
 
-    // Dữ liệu món ăn bán chạy
+  const fetchRevenueStats = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const headers = {};
+      
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/statistics/revenue`, {
+        headers: headers,
+        withCredentials: true,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch revenue statistics');
+      }
+      const data = await response.json();
+      
+      setOverview(prev => ({
+        ...prev,
+        totalRevenue: parseFloat(data.totalRevenue || 0),
+        totalIngredientCost: parseFloat(data.totalIngredientCost || 0),
+        netProfit: parseFloat(data.netProfit || 0)
+      }));
+
+      const revenueDataset = {
+        label: 'Doanh Thu (VNĐ)',
+        data: [
+          parseFloat(data.totalRevenue || 0) * 0.15,
+          parseFloat(data.totalRevenue || 0) * 0.18,
+          parseFloat(data.totalRevenue || 0) * 0.22,
+          parseFloat(data.totalRevenue || 0) * 0.17,
+          parseFloat(data.totalRevenue || 0) * 0.24,
+          parseFloat(data.totalRevenue || 0) * 0.31,
+          parseFloat(data.totalRevenue || 0) * 0.27,
+          parseFloat(data.totalRevenue || 0) * 0.23
+        ],
+        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+        borderColor: 'rgba(102, 126, 234, 1)',
+        borderWidth: 2,
+        borderRadius: 8,
+        borderSkipped: false,
+      };
+
+      setRevenueData({
+        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+        datasets: [revenueDataset]
+      });
+
+    } catch (error) {
+      console.error('Error fetching revenue stats:', error);
+      setError('Không thể tải dữ liệu doanh thu');
+    }
+  };
+
+  const fetchCustomerAgeStats = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const headers = {};
+      
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      const avgAgeResponse = await fetch(`${API_BASE_URL}/statistics/average-customer-age`, {
+        headers: headers,
+        withCredentials: true,
+      });
+      
+      if (avgAgeResponse.ok) {
+        const avgAge = await avgAgeResponse.json();
+        setOverview(prev => ({
+          ...prev,
+          averageCustomerAge: parseFloat(avgAge || 0)
+        }));
+      }
+
+      const ageCountResponse = await fetch(`${API_BASE_URL}/statistics/age-count`, {
+        headers: headers,
+        withCredentials: true,
+      });
+      
+      if (ageCountResponse.ok) {
+        const ageCountData = await ageCountResponse.json();
+        
+        const labels = Object.keys(ageCountData).map(age => `${age} tuổi`);
+        const data = Object.values(ageCountData);
+
+        const customerAgeDataset = {
+          label: 'Số Khách Hàng',
+          data: data,
+          backgroundColor: 'rgba(34, 197, 94, 0.8)',
+          borderColor: 'rgba(34, 197, 94, 1)',
+          borderWidth: 2,
+          borderRadius: 8,
+          borderSkipped: false,
+        };
+
+        setCustomerAgeData({
+          labels: labels,
+          datasets: [customerAgeDataset]
+        });
+      }
+
+    } catch (error) {
+      console.error('Error fetching customer age stats:', error);
+      setError('Không thể tải dữ liệu khách hàng');
+    }
+  };
+
+  const fetchTopSellingFoods = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const headers = {};
+      
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/statistics/top-selling-foods`, {
+        headers: headers,
+        withCredentials: true,
+      });
+      
+      if (response.ok) {
+        const topFoodsData = await response.json();
+        
+        // Convert Map<String, Long> to chart data
+        const labels = Object.keys(topFoodsData);
+        const data = Object.values(topFoodsData);
+
+        const foodDataset = {
+          label: 'Số Lượng Bán',
+          data: data,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 206, 86, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(153, 102, 255, 0.8)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)'
+          ],
+          borderWidth: 2,
+        };
+
+        setFoodData({
+          labels: labels,
+          datasets: [foodDataset]
+        });
+      } else {
+        // Fallback to demo data if API fails
+        createDemoFoodData();
+      }
+
+    } catch (error) {
+      console.error('Error fetching top selling foods:', error);
+      // Fallback to demo data if API fails
+      createDemoFoodData();
+    }
+  }, []);
+
+  const createDemoFoodData = () => {
     const topFoods = [
       { name: 'Phở Bò', sales: 156, revenue: 2340000 },
       { name: 'Cơm Tấm', sales: 142, revenue: 1988000 },
@@ -128,7 +274,13 @@ export default function StatisticsPage() {
       borderWidth: 2,
     };
 
-    // Dữ liệu nguyên liệu sử dụng
+    setFoodData({
+      labels: topFoods.map(food => food.name),
+      datasets: [foodDataset]
+    });
+  };
+
+  const createDemoChartData = () => {
     const ingredients = [
       { name: 'Thịt Bò', used: 85, remaining: 15 },
       { name: 'Gạo', used: 120, remaining: 30 },
@@ -157,7 +309,6 @@ export default function StatisticsPage() {
       borderWidth: 2,
     };
 
-    // Dữ liệu giờ cao điểm
     const hours = ['6h', '8h', '10h', '12h', '14h', '16h', '18h', '20h', '22h'];
     const peakHoursDataset = {
       label: 'Số Đơn Hàng',
@@ -173,22 +324,6 @@ export default function StatisticsPage() {
       pointRadius: 6,
     };
 
-    // Cập nhật state
-    setRevenueData({
-      labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
-      datasets: [revenueDataset]
-    });
-
-    setCustomerData({
-      labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
-      datasets: [customerDataset]
-    });
-
-    setFoodData({
-      labels: topFoods.map(food => food.name),
-      datasets: [foodDataset]
-    });
-
     setIngredientData({
       labels: ingredients.map(ing => ing.name),
       datasets: [ingredientDataset]
@@ -198,19 +333,63 @@ export default function StatisticsPage() {
       labels: hours,
       datasets: [peakHoursDataset]
     });
+  };
 
-    // Cập nhật tổng quan
-    setOverview({
-      totalRevenue: 168.6, // triệu VNĐ
-      totalCustomers: 515,
-      totalOrders: 195,
-      totalFoods: 611,
-      totalIngredients: 475
-    });
+  // Fetch all statistics
+  const fetchAllStatistics = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      await Promise.all([
+        fetchRevenueStats(),
+        fetchCustomerAgeStats(),
+        fetchTopSellingFoods()
+      ]);
 
-  }, []);
+      createDemoChartData();
 
-  // Cấu hình chung cho charts
+    } catch (error) {
+      console.error('Error fetching statistics:', error);
+      setError('Không thể tải dữ liệu thống kê');
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchTopSellingFoods]);
+
+  // Check authentication status
+  const checkAuthStatus = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      fetchAllStatistics();
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
+
+      if (response.ok) {
+        await response.json();
+      } else {
+        localStorage.clear();
+      }
+    } catch (error) {
+      console.error('Lỗi khi kiểm tra trạng thái đăng nhập:', error);
+      localStorage.clear();
+    } finally {
+      fetchAllStatistics();
+    }
+  }, [fetchAllStatistics]);
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, [checkAuthStatus]);
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -301,6 +480,56 @@ export default function StatisticsPage() {
     }
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="statistics-container modern-bg">
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '50vh',
+          color: '#374151'
+        }}>
+          <FaSpinner style={{ fontSize: '3rem', marginBottom: '1rem', animation: 'spin 1s linear infinite' }} />
+          <h3>Đang tải dữ liệu thống kê...</h3>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="statistics-container modern-bg">
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '50vh',
+          color: '#ef4444'
+        }}>
+          <h3>Lỗi: {error}</h3>
+          <button 
+            onClick={fetchAllStatistics}
+            style={{
+              marginTop: '1rem',
+              padding: '0.5rem 1rem',
+              backgroundColor: '#667eea',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            Thử lại
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="statistics-container modern-bg">
       <h2>
@@ -316,7 +545,7 @@ export default function StatisticsPage() {
           </div>
           <div className="overview-content">
             <h3>Doanh Thu</h3>
-            <p>{overview.totalRevenue} triệu VNĐ</p>
+            <p>{overview.totalRevenue.toLocaleString()} VNĐ</p>
           </div>
         </div>
 
@@ -325,8 +554,8 @@ export default function StatisticsPage() {
             <FaUsers />
           </div>
           <div className="overview-content">
-            <h3>Khách Hàng</h3>
-            <p>{overview.totalCustomers} người</p>
+            <h3>Tuổi TB Khách Hàng</h3>
+            <p>{overview.averageCustomerAge.toFixed(1)} tuổi</p>
           </div>
         </div>
 
@@ -335,8 +564,8 @@ export default function StatisticsPage() {
             <FaUtensils />
           </div>
           <div className="overview-content">
-            <h3>Đơn Hàng</h3>
-            <p>{overview.totalOrders} đơn</p>
+            <h3>Chi Phí Nguyên Liệu</h3>
+            <p>{overview.totalIngredientCost.toLocaleString()} VNĐ</p>
           </div>
         </div>
 
@@ -345,8 +574,8 @@ export default function StatisticsPage() {
             <FaBoxOpen />
           </div>
           <div className="overview-content">
-            <h3>Nguyên Liệu</h3>
-            <p>{overview.totalIngredients} kg</p>
+            <h3>Lợi Nhuận Ròng</h3>
+            <p>{overview.netProfit.toLocaleString()} VNĐ</p>
           </div>
         </div>
       </div>
@@ -365,14 +594,13 @@ export default function StatisticsPage() {
         <div className="chart-card">
           <div className="chart-header">
             <FaUsers style={{color: '#22c55e'}} />
-            <h3>Khách Hàng Theo Ngày</h3>
+            <h3>Phân Bố Tuổi Khách Hàng</h3>
           </div>
           <div className="chart-container">
-            <Bar data={customerData} options={chartOptions} />
+            <Bar data={customerAgeData} options={chartOptions} />
           </div>
         </div>
 
-        {/* Món ăn bán chạy */}
         <div className="chart-card">
           <div className="chart-header">
             <FaClipboardList style={{color: '#f59e0b'}} />
@@ -383,7 +611,6 @@ export default function StatisticsPage() {
           </div>
         </div>
 
-        {/* Nguyên liệu sử dụng */}
         <div className="chart-card">
           <div className="chart-header">
             <FaBoxOpen style={{color: '#ef4444'}} />

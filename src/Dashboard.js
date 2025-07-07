@@ -25,7 +25,6 @@ export default function Dashboard() {
       const token = localStorage.getItem('token');
       if (!token) {
         setIsAuthenticated(false);
-        // Vẫn fetch foods nhưng không cần token
         fetchFoods();
         return;
       }
@@ -42,7 +41,6 @@ export default function Dashboard() {
           await response.json();
           setIsAuthenticated(true);
         } else {
-          // Token không hợp lệ
           localStorage.clear();
           setIsAuthenticated(false);
         }
@@ -51,7 +49,6 @@ export default function Dashboard() {
         localStorage.clear();
         setIsAuthenticated(false);
       } finally {
-        // Vẫn fetch foods
         fetchFoods();
       }
     };
