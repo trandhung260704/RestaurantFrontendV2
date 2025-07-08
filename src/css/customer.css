@@ -5,6 +5,7 @@
   position: relative;
   overflow-x: hidden;
   padding-top: 70px;
+  color: #0d0311 !important; 
 }
 
 .customer-container::before {
@@ -452,7 +453,7 @@
 }
 
 .customer-email {
-  color: rgba(255, 255, 255, 0.7);
+  color: #0d0311 !important;
   margin: 0;
   font-size: 0.8rem;
 }
@@ -461,6 +462,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  color: #0d0311 !important;
 }
 
 .contact-item {
@@ -474,7 +476,7 @@
 }
 
 .contact-text {
-  color: rgba(255, 255, 255, 0.8);
+  color: #0d0311 !important;
   font-size: 0.9rem;
 }
 
@@ -486,6 +488,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: #0d0311 !important;
 }
 
 .gender-icon {
@@ -493,7 +496,7 @@
 }
 
 .gender-text {
-  color: rgba(255, 255, 255, 0.8);
+  color: #0d0311 !important;
   font-size: 0.9rem;
 }
 
@@ -512,7 +515,7 @@
 }
 
 .date-text {
-  color: rgba(255, 255, 255, 0.8);
+  color: #0d0311 !important;
   font-size: 0.9rem;
 }
 
@@ -720,10 +723,12 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+    color: #0d0311 !important;
   }
   
   .contact-info {
     gap: 0.3rem;
+    color: #0d0311 !important;
   }
   
   .summary-card {

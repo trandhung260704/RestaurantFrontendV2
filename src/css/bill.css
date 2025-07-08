@@ -102,7 +102,7 @@
 .user-role { color: rgba(255,255,255,0.7); margin: 0; font-size: 0.8rem; }
 .back-btn {
   background: rgba(255,255,255,0.1);
-  color: white;
+  color: #0d0311 !important;
   border: 1px solid rgba(255,255,255,0.3);
   padding: 0.6rem 1.2rem;
   border-radius: 25px;
@@ -115,6 +115,7 @@
   background: rgba(255,255,255,0.2);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  color: #0d0311 !important;
 }
 
 .bill-message {
@@ -288,13 +289,15 @@
 .form-group input {
   background: transparent;
   border: none;
-  color: white;
+  color: #0d0311 !important;
   font-size: 1rem;
   flex: 1;
   padding: 0.7rem 0;
   outline: none;
 }
-.form-group input::placeholder { color: rgba(255,255,255,0.7); }
+.form-group input::placeholder {
+  color: #d3a4e5 !important;
+}
 .form-actions {
   display: flex;
   gap: 1rem;
@@ -361,7 +364,7 @@
 .bill-table {
   width: 100%;
   border-collapse: collapse;
-  color: white;
+  color: #0d0311 !important;
   font-size: 1rem;
   animation: fadeInUp 0.6s;
 }
@@ -404,7 +407,7 @@
   font-weight: 600;
 }
 .bill-time {
-  color: rgba(255,255,255,0.8);
+  color: #0d0311 !important;
   font-size: 0.95rem;
 }
 .edit-btn {

@@ -31,6 +31,9 @@ export default function IngredientManager() {
   const [size] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
 
+  const [addStockMode, setAddStockMode] = useState(false);
+  const [currentStock, setCurrentStock] = useState(0);
+
   useEffect(() => {
     effectsRef.current = new IngredientEffects();
     effectsRef.current.addTableAnimations();
@@ -81,18 +84,26 @@ export default function IngredientManager() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    const dto = {
-      name: formData.name,
-      quantity: formData.quantity,
-      unit_price: formData.unit_price,
-      unit: formData.unit,
-      origin: formData.origin
-    };
-
     try {
-      if (editing) {
-        await axios.put(`${API}/${formData.id}`, dto, {
+      if (addStockMode) {
+        await axios.put(`${API}/${formData.id}`, {
+          quantity: formData.quantity,
+          unit_price: formData.unit_price
+        }, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          withCredentials: true,
+        });
+        setMessage('✅ Đã nhập thêm nguyên liệu thành công!');
+      } else if (editing) {
+        await axios.put(`${API}/${formData.id}`, {
+          name: formData.name,
+          quantity: formData.quantity,
+          unit_price: formData.unit_price,
+          unit: formData.unit,
+          origin: formData.origin
+        }, {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('token'),
           },
@@ -100,7 +111,13 @@ export default function IngredientManager() {
         });
         setMessage('✅ Cập nhật nguyên liệu thành công!');
       } else {
-        await axios.post(API, dto, {
+        await axios.post(API, {
+          name: formData.name,
+          quantity: formData.quantity,
+          unit_price: formData.unit_price,
+          unit: formData.unit,
+          origin: formData.origin
+        }, {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('token'),
           },
@@ -108,16 +125,11 @@ export default function IngredientManager() {
         });
         setMessage('✅ Thêm nguyên liệu thành công!');
       }
-
       setFormData({ id: null, name: '', quantity: '', unit_price: '', unit: '', origin: '' });
       setEditing(false);
+      setAddStockMode(false);
       fetchIngredients();
-
-      // Auto hide message after 3 seconds
-      setTimeout(() => {
-        setMessage('');
-      }, 3000);
-
+      setTimeout(() => setMessage(''), 3000);
     } catch (err) {
       setMessage('❌ Lỗi khi lưu nguyên liệu. Vui lòng thử lại.');
       console.error(err);
@@ -126,18 +138,18 @@ export default function IngredientManager() {
     }
   };
 
-  const handleEdit = (ingredient) => {
+  const handleAddStock = (ingredient) => {
     setFormData({
       id: ingredient.id_ingredient,
       name: ingredient.name,
-      quantity: ingredient.quantity,
+      quantity: 0,
       unit_price: ingredient.unit_price,
       unit: ingredient.unit,
       origin: ingredient.origin
     });
+    setCurrentStock(ingredient.quantity);
+    setAddStockMode(true);
     setEditing(true);
-    
-    // Scroll to form
     document.querySelector('.ingredient-form').scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -155,7 +167,6 @@ export default function IngredientManager() {
       setMessage('✅ Đã xoá nguyên liệu thành công!');
       fetchIngredients();
       
-      // Auto hide message after 3 seconds
       setTimeout(() => {
         setMessage('');
       }, 3000);
@@ -170,6 +181,7 @@ export default function IngredientManager() {
   const handleCancel = () => {
     setFormData({ id: null, name: '', quantity: '', unit_price: '', unit: '', origin: '' });
     setEditing(false);
+    setAddStockMode(false);
   };
 
   return (
@@ -271,7 +283,6 @@ export default function IngredientManager() {
             )}
           </div>
 
-          {/* Form Section */}
           <div className="form-section">
             <h3 className="form-title">📝 {editing ? 'Cập nhật nguyên liệu' : 'Thêm nguyên liệu mới'}</h3>
             <form onSubmit={handleSubmit} className="ingredient-form">
@@ -285,18 +296,26 @@ export default function IngredientManager() {
                     onChange={handleChange} 
                     required 
                     className="form-input"
+                    readOnly={addStockMode}
                   />
                 </div>
+                {addStockMode && (
+                  <div className="form-group">
+                    <label className="form-label">Số lượng hiện có</label>
+                    <input value={currentStock} readOnly className="form-input" />
+                  </div>
+                )}
                 <div className="form-group">
-                  <label className="form-label">Số lượng</label>
+                  <label className="form-label">{addStockMode ? 'Số lượng muốn thêm' : 'Số lượng'}</label>
                   <input 
                     name="quantity" 
                     type="number" 
-                    placeholder="Nhập số lượng" 
+                    placeholder={addStockMode ? 'Nhập số lượng muốn thêm' : 'Nhập số lượng'} 
                     value={formData.quantity} 
                     onChange={handleChange} 
                     required 
                     className="form-input"
+                    min="0"
                   />
                 </div>
                 <div className="form-group">
@@ -320,6 +339,7 @@ export default function IngredientManager() {
                     onChange={handleChange} 
                     required 
                     className="form-input"
+                    readOnly={addStockMode}
                   />
                 </div>
                 <div className="form-group full-width">
@@ -331,6 +351,7 @@ export default function IngredientManager() {
                     onChange={handleChange} 
                     required 
                     className="form-input"
+                    readOnly={addStockMode}
                   />
                 </div>
               </div>
@@ -363,7 +384,6 @@ export default function IngredientManager() {
             </form>
           </div>
 
-          {/* Ingredients Table */}
           <div className="table-section">
             <h3 className="table-title">📋 Danh sách nguyên liệu</h3>
             
@@ -400,10 +420,10 @@ export default function IngredientManager() {
                         <td className="ingredient-origin">{ing.origin}</td>
                         <td className="ingredient-actions">
                           <button 
-                            onClick={() => handleEdit(ing)}
+                            onClick={() => handleAddStock(ing)}
                             className="edit-btn"
                           >
-                            ✏️ Sửa
+                            Nhập thêm nguyên liệu
                           </button>
                           <button 
                             onClick={() => handleDelete(ing.id_ingredient)}

@@ -7,12 +7,12 @@ import {
   FaUtensils, 
   FaUsers, 
   FaChartBar, 
-  FaCog, 
   FaSignOutAlt,
   FaBars,
   FaTimes,
   FaSignInAlt,
-  FaUserPlus
+  FaUserPlus,
+  FaDropbox
 } from 'react-icons/fa';
 
 export default function Header() {
@@ -56,7 +56,6 @@ export default function Header() {
           fullName: userData.full_name || 'User'
         });
       } else {
-        // Token không hợp lệ
         localStorage.clear();
         setIsAuthenticated(false);
         setUserInfo({
@@ -113,7 +112,6 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header-container">
-        {/* Logo Section - Right */}
         <div className="logo-section">
           <Link to="/" className="logo-link">
             <img src={logo} alt="Restaurant Logo" className="header-logo" />
@@ -124,12 +122,10 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
         <button className="mobile-menu-btn" onClick={toggleMenu}>
           {isMenuOpen ? <FaTimes /> : <FaBars />}
         </button>
 
-        {/* Navigation Menu - Left */}
         <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
           <ul className="nav-list">
             <li className="nav-item">
@@ -163,7 +159,7 @@ export default function Header() {
                   className={`nav-link ${isActive('/ingredient') ? 'active' : ''}`}
                   onClick={closeMenu}
                 >
-                  <FaCog className="nav-icon" />
+                  <FaDropbox className="nav-icon" />
                   <span>Nguyên liệu</span>
                 </Link>
               </li>

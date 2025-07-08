@@ -6,7 +6,6 @@
   padding-top: 70px;
 }
 
-/* Floating shapes background */
 .food-container::before {
   content: '';
   position: fixed;
@@ -28,7 +27,6 @@
   66% { transform: translateY(10px) rotate(-1deg); }
 }
 
-/* Header */
 .food-header {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
@@ -154,7 +152,6 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* Message */
 .food-message {
   position: fixed;
   top: 100px;
@@ -191,7 +188,6 @@
   }
 }
 
-/* Form Section */
 .form-section {
   max-width: 1200px;
   margin: 2rem auto;
@@ -264,7 +260,6 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* Ingredient Section */
 .ingredient-section {
   margin-top: 2rem;
   padding-top: 2rem;
@@ -299,14 +294,14 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 25px;
   padding: 1rem 1rem 1rem 3rem;
-  color: white;
+  color: #250219;
   font-size: 1rem;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 }
 
 .search-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: #0d0311;
 }
 
 .search-input:focus {
@@ -315,9 +310,9 @@
   background: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  color: #0d0311 !important;
 }
 
-/* Ingredient Grid */
 .ingredient-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -361,7 +356,7 @@
 }
 
 .ingredient-quantity {
-  color: rgba(255, 255, 255, 0.8);
+  color: #0d0311;
   font-size: 0.9rem;
 }
 
@@ -436,12 +431,14 @@
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
+  color: #0d0311 ;
 }
 
 .selected-ingredients {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  color: #0d0311;
 }
 
 .selected-ingredient-item {
@@ -454,6 +451,7 @@
   justify-content: space-between;
   align-items: center;
   transition: all 0.3s ease;
+  color: #0d0311 !important;
 }
 
 .selected-ingredient-item:hover {
@@ -468,13 +466,13 @@
 }
 
 .selected-ingredient-name {
-  color: white;
+  color: #0d0311 !important;
   font-weight: 600;
   font-size: 1rem;
 }
 
 .selected-ingredient-price {
-  color: rgba(255, 255, 255, 0.7);
+  color: #0d0311 !important;
   font-size: 0.9rem;
 }
 
@@ -489,7 +487,7 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
   padding: 0.5rem;
-  color: white;
+  color: #0d0311;
   width: 80px;
   text-align: center;
   font-size: 0.9rem;

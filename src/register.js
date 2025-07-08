@@ -95,7 +95,17 @@ export default function Register() {
 
     setIsLoading(true);
     try {
-      await axios.post("http://localhost:8099/api/users/register", formData);
+      // Chuyển birthday sang dạng YYYY-MM-DD 00:00:00
+      const formattedBirthday = formData.birthday
+        ? `${formData.birthday} 00:00:00`
+        : '';
+
+      const submitData = {
+        ...formData,
+        birthday: formattedBirthday,
+      };
+
+      await axios.post("http://localhost:8099/api/users/register", submitData);
       setMessage("Đăng ký thành công! Đang chuyển đến trang đăng nhập...");
       
       // Reset form
@@ -122,7 +132,6 @@ export default function Register() {
 
   return (
     <div className="register-container">
-      {/* Background với gradient tím */}
       <div className="register-background">
         <div className="gradient-overlay"></div>
         <div className="floating-shapes">
