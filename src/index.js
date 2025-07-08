@@ -4,10 +4,10 @@ import './index.css';
 import App from './App';
 import Food from './Food';
 import Login from './Login';
-import Order from './order'
+import Order from './order';
 import Ingredient from './Ingredient';
-import Discount from './Discount'
-import Bill from './Bill'
+import Discount from './Discount';
+import Bill from './Bill';
 import Profile from './Profile';
 import Customer from './customer';
 import Employee from './employee';

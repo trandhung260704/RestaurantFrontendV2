@@ -18,7 +18,6 @@ export default function CustomerPage() {
   });
 
   useEffect(() => {
-    // Khởi tạo effects
     effectsRef.current = new CustomerEffects();
     effectsRef.current.addTableEffects();
     effectsRef.current.addSearchEffects();
@@ -27,7 +26,6 @@ export default function CustomerPage() {
     effectsRef.current.addLogoEffects();
     effectsRef.current.addUserInfoEffects();
     
-    // Lấy thông tin user
     const fullName = localStorage.getItem('full_name') || 'Guest';
     const role = localStorage.getItem('role') || 'MANAGER';
     setUserInfo({ fullName, role });

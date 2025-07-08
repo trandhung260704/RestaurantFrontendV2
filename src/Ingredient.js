@@ -218,7 +218,6 @@ export default function IngredientManager() {
           </div>
         </div>
 
-        {/* Message */}
         {message && (
           <div className={`ingredient-message ${message.includes('✅') ? 'success' : 'error'}`}>
             <span>{message}</span>

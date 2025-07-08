@@ -5,14 +5,12 @@ import logo from './image/favicon-48x48.png';
 import { 
   FaHome, 
   FaUtensils, 
-  FaUsers, 
   FaChartBar, 
   FaSignOutAlt,
   FaBars,
   FaTimes,
   FaSignInAlt,
-  FaUserPlus,
-  FaDropbox
+  FaUserPlus
 } from 'react-icons/fa';
 
 export default function Header() {
@@ -24,6 +22,7 @@ export default function Header() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     checkAuthStatus();
@@ -105,6 +104,14 @@ export default function Header() {
     setIsMenuOpen(false);
   };
 
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const closeDropdown = () => {
+    setIsDropdownOpen(false);
+  };
+
   const isActive = (path) => {
     return location.pathname === path;
   };
@@ -153,28 +160,48 @@ export default function Header() {
             )}
 
             {(isManager || isEmployee) && (
-              <li className="nav-item">
-                <Link 
-                  to="/ingredient" 
-                  className={`nav-link ${isActive('/ingredient') ? 'active' : ''}`}
-                  onClick={closeMenu}
-                >
-                  <FaDropbox className="nav-icon" />
-                  <span>Nguyên liệu</span>
-                </Link>
-              </li>
-            )}
-
-            {(isManager || isEmployee) && (
-              <li className="nav-item">
-                <Link 
-                  to="/food" 
-                  className={`nav-link ${isActive('/food') ? 'active' : ''}`}
-                  onClick={closeMenu}
-                >
-                  <FaUtensils className="nav-icon" />
-                  <span>Món ăn</span>
-                </Link>
+              <li className="nav-item dropdown">
+                <button className="nav-link dropdown-toggle" onClick={toggleDropdown} type="button">
+                  <FaBars className="nav-icon" />
+                  <span>Quản lý</span>
+                </button>
+                <ul className={`dropdown-menu${isDropdownOpen ? ' show' : ''}`}>  
+                  <li>
+                    <Link to="/food" className="dropdown-item" onClick={() => { closeDropdown(); closeMenu(); }}>
+                      Món ăn
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/ingredient" className="dropdown-item" onClick={() => { closeDropdown(); closeMenu(); }}>
+                      Nguyên liệu
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/discount" className="dropdown-item" onClick={() => { closeDropdown(); closeMenu(); }}>
+                      Giảm giá
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/bill" className="dropdown-item" onClick={() => { closeDropdown(); closeMenu(); }}>
+                      Hóa đơn
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/manageOrder" className="dropdown-item" onClick={() => { closeDropdown(); closeMenu(); }}>
+                      Quản lý đơn hàng
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/customer" className="dropdown-item" onClick={() => { closeDropdown(); closeMenu(); }}>
+                      Khách hàng
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/employee" className="dropdown-item" onClick={() => { closeDropdown(); closeMenu(); }}>
+                      Nhân viên
+                    </Link>
+                  </li>
+                </ul>
               </li>
             )}
 
@@ -187,19 +214,6 @@ export default function Header() {
                 >
                   <FaChartBar className="nav-icon" />
                   <span>Thống kê</span>
-                </Link>
-              </li>
-            )}
-
-            {(isManager || isEmployee) && (
-              <li className="nav-item">
-                <Link 
-                  to="/customer" 
-                  className={`nav-link ${isActive('/customer') ? 'active' : ''}`}
-                  onClick={closeMenu}
-                >
-                  <FaUsers className="nav-icon" />
-                  <span>Khách hàng</span>
                 </Link>
               </li>
             )}
