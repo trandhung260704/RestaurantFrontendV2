@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './css/dashboard.css';
+import SimpleMap from './components/SimpleMap';
 import { 
   FaPhone, 
   FaEnvelope, 
@@ -56,6 +57,19 @@ export default function Dashboard() {
     checkAuthStatus();
   }, []);
 
+  useEffect(() => {
+    const fetchRestaurantInfo = async () => {
+      try {
+        const response = await axios.get('http://localhost:8099/api/restaurant/info');
+        setRestaurantInfo(response.data);
+      } catch (error) {
+        console.error('Lỗi khi tải thông tin nhà hàng:', error);
+      }
+    };
+    
+    fetchRestaurantInfo();
+  }, []);
+
     // Fetch foods for menu display
   const fetchFoods = async () => {
     try {
@@ -65,7 +79,7 @@ export default function Dashboard() {
       } : {};
       
       const response = await axios.get('http://localhost:8099/api/foods', {
-        params: { page: 0, size: 8 }, // Show first 8 foods
+        params: { page: 0, size: 8 },
         headers,
         withCredentials: true,
       });
@@ -105,12 +119,23 @@ export default function Dashboard() {
     }
   ];
 
-  const contactInfo = {
+  const [restaurantInfo, setRestaurantInfo] = useState({
+    name: 'Restaurant Eternity',
+    address: '1 Võ Văn Ngân, Thủ Đức, TP.HCM',
     phone: '0938 196 822',
     email: 'trandhungeternity@restaurant.com',
     facebook: 'Restaurant Eternity',
-    address: '1 Võ Văn Ngân, Thủ Đức, TP.HCM',
-    hours: '7:00 - 22:00 (Thứ 2 - Chủ nhật)'
+    openingHours: '7:00 - 22:00 (Thứ 2 - Chủ nhật)',
+    latitude: 10.8231,
+    longitude: 106.6297
+  });
+
+  const contactInfo = {
+    phone: restaurantInfo.phone,
+    email: restaurantInfo.email,
+    facebook: restaurantInfo.facebook,
+    address: restaurantInfo.address,
+    hours: restaurantInfo.openingHours
   };
 
   return (
@@ -275,10 +300,10 @@ export default function Dashboard() {
             </div>
 
             <div className="contact-map">
-              <div className="map-placeholder">
-                <FaMapMarkerAlt className="map-icon" />
-                <p>Bản đồ sẽ được hiển thị tại đây</p>
-              </div>
+              <SimpleMap 
+                address={restaurantInfo.address}
+                restaurantName={restaurantInfo.name}
+              />
             </div>
           </div>
         </div>
