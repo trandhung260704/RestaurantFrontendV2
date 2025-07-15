@@ -70,7 +70,6 @@ export default function Dashboard() {
     fetchRestaurantInfo();
   }, []);
 
-    // Fetch foods for menu display
   const fetchFoods = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -86,7 +85,6 @@ export default function Dashboard() {
       setFoods(response.data.content || []);
     } catch (error) {
       console.error('Lỗi khi tải menu:', error);
-      // Fallback data if API fails
       setFoods([
         { id_food: 1, name: 'Phở Bò', price: 45000, category: 'Món chính' },
         { id_food: 2, name: 'Cơm Tấm', price: 35000, category: 'Món chính' },
@@ -140,7 +138,6 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-      {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
           <h1 className="hero-title">
@@ -177,7 +174,6 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="features-section">
         <div className="container">
           <h2 className="section-title">Tại sao chọn chúng tôi?</h2>
@@ -195,7 +191,6 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Menu Preview Section */}
       <section className="menu-section">
         <div className="container">
           <div className="section-header">
@@ -242,7 +237,6 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Contact Section */}
       <section className="contact-section">
         <div className="container">
           <h2 className="section-title">Liên Hệ Với Chúng Tôi</h2>
@@ -309,7 +303,6 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="dashboard-footer">
         <div className="container">
           <div className="footer-content">

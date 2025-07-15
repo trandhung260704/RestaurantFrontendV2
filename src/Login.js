@@ -33,16 +33,21 @@ export default function Login() {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-    
+
     try {
-      const res = await axios.post('http://localhost:8099/api/login', loginData);
+      const userAgent = navigator.userAgent;
+
+      const res = await axios.post('http://localhost:8099/api/login', {
+        ...loginData,
+        userAgent 
+      });
+
       const { token, full_name, role } = res.data;
 
       localStorage.setItem('token', token);
       localStorage.setItem('role', role);
       localStorage.setItem('full_name', full_name);
 
-      // Hiệu ứng chuyển trang
       setTimeout(() => {
         navigate('/');
       }, 1000);
@@ -73,7 +78,6 @@ export default function Login() {
 
   return (
     <div className="login-container">
-      {/* Background với gradient tím */}
       <div className="login-background">
         <div className="gradient-overlay"></div>
         <div className="floating-shapes">
@@ -84,7 +88,6 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Button quay về trang chủ */}
       <Link to="/" className="back-home-btn">
         <FaArrowLeft />
         <span>Về trang chủ</span>
