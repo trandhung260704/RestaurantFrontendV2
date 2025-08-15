@@ -124,8 +124,8 @@ export default function Header() {
           <Link to="/" className="logo-link">
             <img src={logo} alt="Restaurant Logo" className="header-logo" />
             <div className="logo-text">
-              <h1>Restaurant</h1>
-              <span>Eternity</span>
+              <h1>RestaurantFrontEndV2</h1>
+              <span>Management System</span>
             </div>
           </Link>
         </div>

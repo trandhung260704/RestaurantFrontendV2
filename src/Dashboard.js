@@ -118,11 +118,11 @@ export default function Dashboard() {
   ];
 
   const [restaurantInfo, setRestaurantInfo] = useState({
-    name: 'Restaurant Eternity',
+    name: 'RestaurantFrontEndV2',
     address: '1 Võ Văn Ngân, Thủ Đức, TP.HCM',
     phone: '0938 196 822',
-    email: 'trandhungeternity@restaurant.com',
-    facebook: 'Restaurant Eternity',
+    email: 'trandhung260704@restaurant.com',
+    facebook: 'RestaurantFrontEndV2',
     openingHours: '7:00 - 22:00 (Thứ 2 - Chủ nhật)',
     latitude: 10.8231,
     longitude: 106.6297
@@ -141,7 +141,7 @@ export default function Dashboard() {
       <section className="hero-section">
         <div className="hero-content">
           <h1 className="hero-title">
-            Chào mừng đến với <span className="highlight">Restaurant Eternity</span>
+            Chào mừng đến với <span className="highlight">RestaurantFrontEndV2</span>
           </h1>
           <p className="hero-subtitle">
             Nơi hội tụ những hương vị truyền thống Việt Nam với không gian ấm cúng, 
@@ -307,7 +307,7 @@ export default function Dashboard() {
         <div className="container">
           <div className="footer-content">
             <div className="footer-section">
-              <h3>Restaurant Eternity</h3>
+              <h3>RestaurantFrontEndV2</h3>
               <p>Hạnh phúc là khi được thưởng thức bữa ăn ngon với người thương.</p>
             </div>
             <div className="footer-section">
@@ -334,7 +334,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; 2024 Restaurant Eternity. Tất cả quyền được bảo lưu.</p>
+            <p>&copy; 2024 RestaurantFrontEndV2. Tất cả quyền được bảo lưu.</p>
           </div>
         </div>
       </footer>

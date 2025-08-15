@@ -26,7 +26,8 @@ root.render(
     <GoogleOAuthProvider clientId="324365349-cvf0lkg4h1150vqrsk89fi83mb6ger6f.apps.googleusercontent.com">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<App />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/register" element={<Register />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Food" element={<Food />} />
