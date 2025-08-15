@@ -1,0 +1,44 @@
+.order-list-container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: auto;
+  }
+  
+  .order-list-message {
+    color: green;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .order-table th, .order-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .order-table select {
+    padding: 5px;
+  }
+  
+  .delete-btn {
+    background-color: crimson;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .delete-btn:hover {
+    background-color: darkred;
+  }
+  
+  .pagination {
+    margin-top: 10px;
+  }
+  
